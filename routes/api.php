@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AccountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
@@ -32,12 +33,17 @@ Route::group([
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 
 
 Route::middleware(['auth:api'])->group(function () {
+
+    Route::post('/change-email', [AccountController::class, 'changeEmail']);
+    Route::post('/change-password', [AccountController::class, 'changePassword']);
+    Route::post('/add-phone-number', [AccountController::class, 'addPhoneNumber']);
+
+
     //Catalogs
     Route::get('/catalogs', [CatalogsController::class, 'get']);
     Route::post('/catalogs', [CatalogsController::class, 'create']);
