@@ -9,42 +9,39 @@ class Order extends Model
 {
     use HasFactory;
     protected $fillable = [
-    'client_id',
-    'invoice_number',
-    'catalog_id',
-    'quantity_id',
-    'meters_requested',
-    'price_per_meter',
-    'discount',
-    'total',
-    'net_total',
-    'notes'
+        'CustomerId',
+        'Discount',
+        'Date',
+        'Note',
+        'Number',
+        'IsPaid',
+        'PaymentDate',
+        'IsDeleted'
     ];
+    protected $table = 'Orders';
+
+    protected $primaryKey = 'Id';
+
+    public $timestamps = false;
 
     protected static function boot()
     {
         parent::boot();
         static::creating(function ($order) {
             do {
-                $invoiceNumber = mt_rand(100000, 999999);
-            } while (self::where('invoice_number', $invoiceNumber)->exists());
+                $Number = mt_rand(100000, 999999);
+            } while (self::where('Number', $Number)->exists());
 
-            $order->invoice_number = $invoiceNumber;
+            $order->Number = $Number;
         });
     }
 
-    public function client()
+    public function customer()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Customer::class, 'CustomerId', 'Id');
     }
-
-    public function catalog()
+    public function items()
     {
-        return $this->belongsTo(Catalog::class);
-    }
-
-    public function quantity()
-    {
-        return $this->belongsTo(Quantity::class);
+        return $this->hasMany(Item::class, 'OrderId', 'Id');
     }
 }

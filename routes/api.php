@@ -39,6 +39,7 @@ Route::group([
 
 Route::middleware(['auth:api'])->group(function () {
 
+    //Account Sittings
     Route::post('/change-email', [AccountController::class, 'changeEmail']);
     Route::post('/change-password', [AccountController::class, 'changePassword']);
     Route::post('/add-phone-number', [AccountController::class, 'addPhoneNumber']);
@@ -56,7 +57,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/catalogs/{catalogId}/colors', [ColorController::class, 'getColors']);
     Route::post('/catalogs/{catalogId}/colors/update', [ColorController::class, 'updateColors']);
 
-    //clients
+    //customer
     Route::get('/customers', [CustomerController::class, 'get']);
     Route::get('/customers/{customerId}', [CustomerController::class, 'show']);
     Route::post('/customers', [CustomerController::class, 'store']);
@@ -64,5 +65,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/customers/{customerId}', [CustomerController::class, 'destroy']);
 
     //Orders
-    Route::post('/clients/{clientId}/orders', [OrderController::class, 'store']);
+    Route::post('/customers/{customerId}/orders', [OrderController::class, 'store']);
+    Route::get('/customers/{customerId}/orders', [OrderController::class, 'getInfo']);
+
 });

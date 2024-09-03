@@ -2,44 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use App\Models\Order;
-use App\Models\Client;
-use App\Models\Quantity;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function store(Request $request, $clientId)
+
+    public function getInfo($customerId)
     {
-        $clientExists = Client::find($clientId);
-        if (!$clientExists) {return response()->json(['message' => 'Client not found',], 404);}
+        $orders = Order::with(['customer:Id,FullName', 'items:Id,OrderId,CountOfMeters,MeterPrice'])
+            ->where('CustomerId', $customerId)
+            ->get();
 
-        $validatedData = $request->validate([
-        'catalog_id' => 'required|exists:catalogs,id',
-        'quantity_id' => 'required|exists:quantities,id',
-        'meters_requested' => 'required|integer|min:1',
-        'discount' => 'nullable|numeric|min:0',
-        'notes' => 'nullable|string',
-        ]);
+        $filteredOrders = $orders->map(function ($order) {
+            $sub_total = $order->items->sum(function ($item) {
+                return $item->CountOfMeters * $item->MeterPrice;
+            });
 
-        $quantity = Quantity::findOrFail($validatedData['quantity_id']);
-        $price_per_meter = $quantity->price_per_meter;
-        $total = $validatedData['meters_requested'] * $price_per_meter;
-        $discount = $validatedData['discount'] ?? 0;
-        $netTotal = $total - $discount;
+            $total = $sub_total - $order->Discount;
 
-        $order = Order::create([
-        'client_id' => $clientId,
-        'catalog_id' => $validatedData['catalog_id'],
-        'quantity_id' => $validatedData['quantity_id'],
-        'meters_requested' => $validatedData['meters_requested'],
-        'discount' => $discount,
-        'total' => $total,
-        'net_total' => $netTotal,
-        'notes' => $validatedData['notes'],
-        ]);
+            return [
+                'Number' => $order->Number,
+                'Date' => $order->Date,
+                'PaymentDate' => $order->PaymentDate,
+                'sub_total' => $sub_total,
+                'Discount' => $order->Discount,
+                'total' => $total,
+                'Note' => $order->Note,
+                'CustomerFullName' => $order->customer->FullName,
+            ];
+        });
+
         return response()->json([
-        'message' => 'Order created successfully!',
-        'data' => $order], 201);
+            'orders' => $filteredOrders
+        ]);
+    }
+    public function store(Request $request, $customerId)
+    {
+        $validatedData = $request->validate([
+            'Discount' => 'nullable|numeric|min:0',
+            'Date' => 'nullable|date',
+            'PaymentDate' => 'nullable|date',
+            'Note' => 'nullable|string',
+            'IsPaid' => 'nullable|boolean',
+            'Items' => 'required|array',
+            'Items.*.Catalog' => 'required|string',
+            'Items.*.ColorNumber' => 'required|integer',
+            'Items.*.CountOfMeters' => 'required|numeric',
+            'Items.*.MeterPrice' => 'required|numeric',
+            'Items.*.Note' => 'nullable|string',
+        ]);
+        $order = new Order();
+        $order->CustomerId = $customerId;
+        $order->Discount = $validatedData['Discount'] ?? 0;
+        $order->Date = now();
+        $order->Note = $validatedData['Note'] ?? null;
+        $order->IsPaid = $validatedData['IsPaid'] ?? false;
+        $order->PaymentDate = $order->IsPaid ? now() : $validatedData['PaymentDate'] ?? null;
+        $order->IsDeleted = false;
+        $order->save();
+        foreach ($validatedData['Items'] as $itemData) {
+            $item = new Item($itemData);
+            $item->OrderId = $order->Id;
+            $item->save();
+        }
+        return response()->json([
+            'message' => 'Order created successfully',
+            'order' => $order,
+            'items' => $order->items
+        ], 201);
     }
 }

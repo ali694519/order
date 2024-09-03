@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Catalog extends Model
 {
     use HasFactory;
-    protected $fillable = ['Name','Price'];
+    protected $fillable = ['Name', 'Price'];
     protected $table = 'Catalogs';
     protected $primaryKey = 'Id';
     public $timestamps = false;
 
-    public function quantities() {
-    return $this->hasMany(Color::class,'catalogId');
+    public function quantities()
+    {
+        return $this->hasMany(Color::class, 'catalogId');
     }
+
 }
