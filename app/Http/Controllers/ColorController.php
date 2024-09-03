@@ -19,28 +19,27 @@ class ColorController extends Controller
             ], 404);
         }
 
-    $validatedData = $request->validate([
-        'colors' => 'required|array',
-        'colors.*.Name' => 'required|string|max:50',
-        'colors.*.Quantity' => 'required|numeric|min:0',
-    ]);
-    $colors = [];
-    foreach ($validatedData['colors'] as $colorData) {
-        $colors[] = Color::create([
-            'CatalogId' => $catalogId,
-            'Name' => $colorData['color'],
-            'Quantity' => $colorData['meters'],
+        $validatedData = $request->validate([
+            'colors' => 'required|array',
+            'colors.*.Name' => 'required|string|max:50',
+            'colors.*.Quantity' => 'required|numeric|min:0',
         ]);
+        $colors = [];
+        foreach ($validatedData['colors'] as $colorData) {
+            $colors[] = Color::create([
+                'CatalogId' => $catalogId,
+                'Name' => $colorData['color'],
+                'Quantity' => $colorData['meters'],
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Color added successfully!',
+            'data' => $colors
+        ], 201);
     }
 
-    return response()->json([
-        'message' => 'Color added successfully!',
-        'data' => $colors
-    ], 201);
-
-    }
-
-    public function getColors(Request $request,$catalogId)
+    public function getColors(Request $request, $catalogId)
     {
         $colors = Color::where('CatalogId', $catalogId)
             ->select('Id', 'Name', 'Quantity')
@@ -50,7 +49,7 @@ class ColorController extends Controller
             'data' => $colors
         ]);
     }
-    public function updateColors(Request $request,$catalogId)
+    public function updateColors(Request $request, $catalogId)
     {
         $catalogExists = Catalog::find($catalogId);
 
@@ -64,10 +63,10 @@ class ColorController extends Controller
         $colorsData = $request->input('data');
         foreach ($colorsData as $data) {
             $color = $colors->where('Id', $data['Id'])->first();
-                $color->Quantity += $data['Quantity'];
-                $color->save();
+            $color->Quantity += $data['Quantity'];
+            $color->save();
         }
         return response()
-        ->json(['message' => 'Colors updated successfully']);
+            ->json(['message' => 'Colors updated successfully']);
     }
 }
