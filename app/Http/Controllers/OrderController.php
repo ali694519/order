@@ -11,8 +11,10 @@ class OrderController extends Controller
 
     public function getInfo($customerId)
     {
-        $orders = Order::with(['customer:Id,FullName', 'items:Id,OrderId,CountOfMeters,MeterPrice'])
-            ->where('CustomerId', $customerId)
+        $orders = Order::with([
+            'customer:Id,FullName',
+            'items:Id,OrderId,CountOfMeters,MeterPrice'
+        ])->where('CustomerId', $customerId)
             ->get();
 
         $filteredOrders = $orders->map(function ($order) {
@@ -30,7 +32,7 @@ class OrderController extends Controller
                 'Discount' => $order->Discount,
                 'total' => $total,
                 'Note' => $order->Note,
-                'CustomerFullName' => $order->customer->FullName,
+                'customer_name' => $order->customer->FullName,
             ];
         });
 
@@ -72,5 +74,83 @@ class OrderController extends Controller
             'order' => $order,
             'items' => $order->items
         ], 201);
+    }
+
+    public function details(Request $request)
+    {
+        $validatedData = $request->validate([
+            'CustomerId' => 'required|integer',
+            'OrderId' => 'required|integer',
+        ]);
+
+        $CustomerId = $validatedData['CustomerId'];
+        $OrderId = $validatedData['OrderId'];
+
+        $order = Order::with([
+            'customer:Id,FullName',
+            'items:Id,OrderId,Catalog,ColorNumber,CountOfMeters,MeterPrice'
+        ])->where('CustomerId', $CustomerId)
+            ->where('Id', $OrderId)
+            ->first();
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        return response()->json($order->formatOrderDetails());
+    }
+
+    public function markAsPaid(Request $request)
+    {
+        $validatedData = $request->validate([
+            'CustomerId' => 'required|integer',
+            'OrderId' => 'required|integer',
+        ]);
+
+        $CustomerId = $validatedData['CustomerId'];
+        $OrderId = $validatedData['OrderId'];
+
+        $order = Order::where('CustomerId', $CustomerId)
+            ->where('Id', $OrderId)
+            ->first();
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        if ($order->IsPaid) {
+            return response()->json(['message' => 'Order is already paid'], 400);
+        }
+
+        $order->IsPaid = true;
+        $order->PaymentDate = now();
+        $order->save();
+
+        return response()->json([
+            'message' => 'Order marked as paid successfully',
+            'order' => $order->formatOrderDetails(),
+        ]);
+    }
+
+    public function deleteOrder(Request $request)
+    {
+        $validatedData = $request->validate([
+            'CustomerId' => 'required|integer',
+            'OrderId' => 'required|integer',
+        ]);
+
+        $CustomerId = $validatedData['CustomerId'];
+        $OrderId = $validatedData['OrderId'];
+
+        $order = Order::where('CustomerId', $CustomerId)
+            ->where('Id', $OrderId)
+            ->first();
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        $order->delete();
+
+        return response()->json(['message' => 'Order deleted successfully']);
     }
 }

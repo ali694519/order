@@ -67,5 +67,7 @@ Route::middleware(['auth:api'])->group(function () {
     //Orders
     Route::post('/customers/{customerId}/orders', [OrderController::class, 'store']);
     Route::get('/customers/{customerId}/orders', [OrderController::class, 'getInfo']);
-
+    Route::get('/order/details', [OrderController::class, 'details']);
+    Route::post('/order/pay', [OrderController::class, 'markAsPaid']);
+    Route::delete('/order/delete', [OrderController::class, 'deleteOrder']);
 });

@@ -24,6 +24,7 @@ class Order extends Model
 
     public $timestamps = false;
 
+
     protected static function boot()
     {
         parent::boot();
@@ -43,5 +44,32 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(Item::class, 'OrderId', 'Id');
+    }
+
+    public function formatOrderDetails()
+    {
+        $subTotal = $this->items->sum(function ($item) {
+            return $item->CountOfMeters * $item->MeterPrice;
+        });
+        $total = $subTotal - $this->Discount;
+
+        return [
+            'order_number' => $this->Number,
+            'order_date' => $this->Date,
+            'sub_total' => $subTotal,
+            'discount' => $this->Discount,
+            'total' => $total,
+            'note' => $this->Note,
+            'customer_name' => $this->customer->FullName,
+            'items' => $this->items->map(function ($item) {
+                return [
+                    'Catalog' => $item->Catalog,
+                    'ColorNumber' => $item->ColorNumber,
+                    'CountOfMeters' => $item->CountOfMeters,
+                    'MeterPrice' => $item->MeterPrice,
+                    'item_total' => $item->CountOfMeters * $item->MeterPrice,
+                ];
+            }),
+        ];
     }
 }
