@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\Auth\AccountController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\CatalogsController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CatalogsController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\auth\AuthController;
+use App\Http\Controllers\auth\UserController;
+use App\Http\Controllers\Auth\AccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,11 +19,6 @@ use App\Http\Controllers\auth\AuthController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 
 Route::group([
     'middleware' => 'api',
@@ -70,4 +65,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/order/details', [OrderController::class, 'details']);
     Route::post('/order/pay', [OrderController::class, 'markAsPaid']);
     Route::delete('/order/delete', [OrderController::class, 'deleteOrder']);
+
+    //User
+
+    Route::post('/user/change-role', [UserController::class, 'changeUserRole']);
 });
