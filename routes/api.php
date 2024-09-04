@@ -60,7 +60,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/customers/{customerId}', [CustomerController::class, 'destroy']);
 
     //Orders
-    Route::post('/customers/{customerId}/orders', [OrderController::class, 'store']);
+    Route::post('/customers/{customerId}/orders', [OrderController::class, 'store'])->middleware('role:ADMINS');
     Route::get('/customers/{customerId}/orders', [OrderController::class, 'getInfo']);
     Route::get('/order/details', [OrderController::class, 'details']);
     Route::post('/order/pay', [OrderController::class, 'markAsPaid']);
