@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
+
     public function changeEmail(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -18,6 +19,7 @@ class AccountController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        /** @var \App\Models\User $user **/
         $user = auth()->user();
         $user->Email = $request->Email;
         $user->UserName = $request->Email;
@@ -40,6 +42,7 @@ class AccountController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        /** @var \App\Models\User $user **/
 
         $user = auth()->user();
 
@@ -61,6 +64,7 @@ class AccountController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        /** @var \App\Models\User $user **/
         $user = auth()->user();
         $user->PhoneNumber = $request->PhoneNumber;
         $user->PhoneNumberConfirmed = true;

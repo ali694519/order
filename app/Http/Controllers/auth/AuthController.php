@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\auth;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -48,6 +50,14 @@ class AuthController extends Controller
         $data = $validator->validated();
         $data['PasswordHash'] = Hash::make($data['PasswordHash']);
         $user = User::create($data);
+        $normalUserRole = Role::where('NormalizedName', 'NORMALUSER')->first();
+
+        if ($normalUserRole) {
+            DB::table('AspNetUserRoles')->insert([
+                'UserId' => $user->Id,
+                'RoleId' => $normalUserRole->Id,
+            ]);
+        }
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user

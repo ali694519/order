@@ -24,11 +24,6 @@ class User extends Authenticatable implements JWTSubject
         'PasswordHash',
     ];
 
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
     public function roles()
     {
         return $this->belongsToMany(
@@ -37,6 +32,10 @@ class User extends Authenticatable implements JWTSubject
             'UserId',
             'RoleId'
         );
+    }
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
     }
 
     public function getJWTCustomClaims()
