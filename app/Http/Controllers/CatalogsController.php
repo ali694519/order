@@ -1,23 +1,27 @@
 <?php
 
-Namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
 use App\Models\Catalog;
 use Illuminate\Http\Request;
 
 class CatalogsController extends Controller
 {
-    public function get(){
+    public function get(Request $request)
+    {
+        $perPage = $request->input('per_page', 5);
+        $page = $request->input('page', 1);
         $catalogs = Catalog::select('Id', 'Name', 'Price')
             ->withSum('quantities as total_meters', 'Quantity')
-            ->paginate(10);
+            ->paginate($perPage, ['*'], 'page', $page);
         return response()->json([
             'data' => $catalogs
         ]);
     }
 
-    public function create(Request $request) {
-         $validatedData = $request->validate([
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
             'Name' => 'required|string|max:255',
             'Price' => 'required|numeric|min:0',
         ]);
@@ -33,7 +37,8 @@ class CatalogsController extends Controller
         ], 201);
     }
 
-    public function update(Request $request,$catalog) {
+    public function update(Request $request, $catalog)
+    {
         $catalog = Catalog::find($catalog);
         if (!$catalog) {
             return response()->json(['message' => 'Client not found'], 404);
@@ -61,7 +66,8 @@ class CatalogsController extends Controller
     }
 
 
-     public function delete($catalog) {
+    public function delete($catalog)
+    {
         $catalog = Catalog::find($catalog);
         if (!$catalog) {
             return response()->json(['message' => 'Client not found'], 404);

@@ -62,11 +62,12 @@ Route::middleware(['auth:api'])->group(function () {
     //Orders
     Route::post('/customers/{customerId}/orders', [OrderController::class, 'store'])->middleware('role:ADMINS');
     Route::get('/customers/{customerId}/orders', [OrderController::class, 'getInfo']);
-    Route::get('/order/details', [OrderController::class, 'details']);
+    Route::get('/customers/order/details', [OrderController::class, 'details']);
     Route::post('/order/pay', [OrderController::class, 'markAsPaid']);
     Route::delete('/order/delete', [OrderController::class, 'deleteOrder']);
 
+    Route::get('/orders', [OrderController::class, 'get']);
+    Route::post('/orders/update/{orderId}', [OrderController::class, 'update'])->middleware('role:ADMINS');
     //User
-
     Route::post('/user/change-role', [UserController::class, 'changeUserRole']);
 });

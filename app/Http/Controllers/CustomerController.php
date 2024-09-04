@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    public function get()
+    public function get(Request $request)
     {
+        $perPage = $request->input('per_page', 5);
+        $page = $request->input('page', 1);
         $customers = Customer::select('Id', 'FullName', 'Country', 'PhoneNumber', 'Email')
-            ->paginate(10);;
+            ->paginate($perPage, ['*'], 'page', $page);
         return response()->json([
             'data' => $customers
         ]);

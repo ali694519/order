@@ -9,13 +9,15 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
 
-    public function getInfo($customerId)
+    public function getInfo(Request $request, $customerId)
     {
+        $perPage = $request->input('per_page', 5);
+        $page = $request->input('page', 1);
         $orders = Order::with([
             'customer:Id,FullName',
             'items:Id,OrderId,CountOfMeters,MeterPrice'
         ])->where('CustomerId', $customerId)
-            ->get();
+            ->paginate($perPage, ['*'], 'page', $page);
 
         $filteredOrders = $orders->map(function ($order) {
             $sub_total = $order->items->sum(function ($item) {
@@ -35,9 +37,9 @@ class OrderController extends Controller
                 'customer_name' => $order->customer->FullName,
             ];
         });
-
+        $data = $orders->setCollection(collect($filteredOrders));
         return response()->json([
-            'orders' => $filteredOrders
+            'orders' => $data
         ]);
     }
     public function store(Request $request, $customerId)
@@ -152,5 +154,79 @@ class OrderController extends Controller
         $order->delete();
 
         return response()->json(['message' => 'Order deleted successfully']);
+    }
+
+    public function update(Request $request, $orderId)
+    {
+        $validatedData = $request->validate([
+            'Discount' => 'nullable|numeric|min:0',
+            'Date' => 'nullable|date',
+            'PaymentDate' => 'nullable|date',
+            'Note' => 'nullable|string',
+            'IsPaid' => 'nullable|boolean',
+            'Items' => 'required|array',
+            'Items.*.Id' => 'required|integer|exists:Items,Id',
+            'Items.*.Catalog' => 'required|string',
+            'Items.*.ColorNumber' => 'required|integer',
+            'Items.*.CountOfMeters' => 'required|numeric',
+            'Items.*.MeterPrice' => 'required|numeric',
+            'Items.*.Note' => 'nullable|string',
+        ]);
+
+        $order = Order::findOrFail($orderId);
+
+        $order->Discount = $validatedData['Discount'] ?? $order->Discount;
+        $order->Date = $validatedData['Date'] ?? $order->Date;
+        $order->Note = $validatedData['Note'] ?? $order->Note;
+        $order->IsPaid = $validatedData['IsPaid'] ?? $order->IsPaid;
+        $order->PaymentDate = $order->IsPaid ? now() : $validatedData['PaymentDate'] ?? $order->PaymentDate;
+        $order->save();
+
+        foreach ($validatedData['Items'] as $itemData) {
+            $item = Item::find($itemData['Id']);
+            $item->Catalog = $itemData['Catalog'];
+            $item->ColorNumber = $itemData['ColorNumber'];
+            $item->CountOfMeters = $itemData['CountOfMeters'];
+            $item->MeterPrice = $itemData['MeterPrice'];
+            $item->Note = $itemData['Note'] ?? $item->Note;
+            $item->save();
+        }
+        return response()->json([
+            'message' => 'Order updated successfully',
+            'order' => $order,
+            'items' => $order->items
+        ], 200);
+    }
+
+    public function get(Request $request)
+    {
+        $perPage = $request->input('per_page', 5);
+        $page = $request->input('page', 1);
+
+        $orders = Order::with([
+            'customer:Id,FullName',
+            'items:Id,OrderId,CountOfMeters,MeterPrice'
+        ])->paginate($perPage, ['*'], 'page', $page);
+
+        $filteredOrders = $orders->map(function ($order) {
+            $sub_total = $order->items->sum(function ($item) {
+                return $item->CountOfMeters * $item->MeterPrice;
+            });
+            $total = $sub_total - $order->Discount;
+            return [
+                'Number' => $order->Number,
+                'Date' => $order->Date,
+                'PaymentDate' => $order->PaymentDate,
+                'sub_total' => $sub_total,
+                'Discount' => $order->Discount,
+                'total' => $total,
+                'Note' => $order->Note,
+                'customer_name' => $order->customer->FullName,
+            ];
+        });
+        $data = $orders->setCollection(collect($filteredOrders));
+        return response()->json([
+            'orders' => $data
+        ]);
     }
 }

@@ -43,7 +43,7 @@ class ColorController extends Controller
     {
         $colors = Color::where('CatalogId', $catalogId)
             ->select('Id', 'Name', 'Quantity')
-            ->get();
+            ->paginate(5);
 
         return response()->json([
             'data' => $colors
