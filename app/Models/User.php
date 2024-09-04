@@ -29,6 +29,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->getKey();
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(
+            Role::class,
+            'AspNetUserRoles',
+            'UserId',
+            'RoleId'
+        );
+    }
+
     public function getJWTCustomClaims()
     {
         return [];
