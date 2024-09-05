@@ -46,6 +46,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/catalog/{catalog}', [CatalogsController::class, 'show']);
     Route::post('/catalogs/{catalog}', [CatalogsController::class, 'update']);
     Route::delete('/catalogs/{catalog}', [CatalogsController::class, 'delete']);
+    Route::get('/search/catalogs', [CatalogsController::class, 'search']);
+
 
     //Quantity
     Route::post('/catalogs/{catalogId}/colors', [ColorController::class, 'addColor']);

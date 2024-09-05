@@ -75,14 +75,29 @@ class CustomerController extends Controller
     }
     public function search(Request $request)
     {
+        $perPage = $request->input('per_page', 5);
+        $page = $request->input('page', 1);
         $search = $request->input('search');
 
         if ($search) {
             $customers = Customer::where('FullName', 'LIKE', '%' . $search . '%')
-                ->select('Id', 'FullName', 'Country', 'PhoneNumber', 'Email')
-                ->get();
+                ->orWhere('SeqNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('Country', 'LIKE', '%' . $search . '%')
+                ->orWhere('Email', 'LIKE', '%' . $search . '%')
+                ->orWhere('PhoneNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('Address', 'LIKE', '%' . $search . '%')
+                ->select(
+                    'Id',
+                    'SeqNumber',
+                    'FullName',
+                    'Country',
+                    'PhoneNumber',
+                    'Email',
+                    'Address'
+                )
+                ->paginate($perPage, ['*'], 'page', $page);
         } else {
-            $customers = Customer::paginate(5);
+            $customers = Customer::paginate($perPage, ['*'], 'page', $page);
         }
 
         return response()->json(['search' => $customers]);

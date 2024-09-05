@@ -78,4 +78,24 @@ class CatalogsController extends Controller
             'message' => 'Catalog deleted successfully!'
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $perPage = $request->input('per_page', 5);
+        $page = $request->input('page', 1);
+        $search = $request->input('search');
+
+        if ($search) {
+            $catalogs = Catalog::where('Name', 'LIKE', '%' . $search . '%')
+                ->orWhere('Price', 'LIKE', '%' . $search . '%')
+                ->select('Name', 'Price')
+                ->paginate($perPage, ['*'], 'page', $page);
+        } else {
+            $catalogs =
+                Catalog::select('Id', 'Name', 'Price')
+                ->withSum('quantities as total_meters', 'Quantity')->paginate($perPage, ['*'], 'page', $page);
+        }
+
+        return response()->json(['search' => $catalogs]);
+    }
 }
