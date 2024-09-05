@@ -14,7 +14,7 @@ class Order extends Model
         'Date',
         'Note',
         'Number',
-        'IsPaid',
+        'Status',
         'PaymentDate',
         'IsDeleted'
     ];
@@ -39,11 +39,19 @@ class Order extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'CustomerId', 'Id');
+        return $this->belongsTo(
+            Customer::class,
+            'CustomerId',
+            'Id'
+        );
     }
     public function items()
     {
-        return $this->hasMany(Item::class, 'OrderId', 'Id');
+        return $this->hasMany(
+            Item::class,
+            'OrderId',
+            'Id'
+        );
     }
 
     public function formatOrderDetails()

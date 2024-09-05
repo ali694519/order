@@ -28,7 +28,10 @@ class CustomerController extends Controller
             'Note' => 'nullable|string|max:1000'
         ]);
         $customer = Customer::create($validatedData);
-        return response()->json(['message' => 'Customer created successfully', 'data' => $customer], 201);
+        return response()->json([
+            'message' => 'Customer created successfully',
+            'data' => $customer
+        ], 201);
     }
 
     public function update(Request $request, $customerId)

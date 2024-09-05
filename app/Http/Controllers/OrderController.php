@@ -49,7 +49,7 @@ class OrderController extends Controller
             'Date' => 'nullable|date',
             'PaymentDate' => 'nullable|date',
             'Note' => 'nullable|string',
-            'IsPaid' => 'nullable|boolean',
+            'status' => 'nullable|integer|in:0,1,2',
             'Items' => 'required|array',
             'Items.*.Catalog' => 'required|string',
             'Items.*.ColorNumber' => 'required|integer',
@@ -62,7 +62,7 @@ class OrderController extends Controller
         $order->Discount = $validatedData['Discount'] ?? 0;
         $order->Date = now();
         $order->Note = $validatedData['Note'] ?? null;
-        $order->IsPaid = $validatedData['IsPaid'] ?? false;
+        $order->Status = $validatedData['status'] ?? 0;
         $order->PaymentDate = $order->IsPaid ? now() : $validatedData['PaymentDate'] ?? null;
         $order->IsDeleted = false;
         $order->save();
@@ -163,7 +163,7 @@ class OrderController extends Controller
             'Date' => 'nullable|date',
             'PaymentDate' => 'nullable|date',
             'Note' => 'nullable|string',
-            'IsPaid' => 'nullable|boolean',
+            'status' => 'nullable|integer|in:0,1,2',
             'Items' => 'required|array',
             'Items.*.Id' => 'required|integer|exists:Items,Id',
             'Items.*.Catalog' => 'required|string',
@@ -178,7 +178,7 @@ class OrderController extends Controller
         $order->Discount = $validatedData['Discount'] ?? $order->Discount;
         $order->Date = $validatedData['Date'] ?? $order->Date;
         $order->Note = $validatedData['Note'] ?? $order->Note;
-        $order->IsPaid = $validatedData['IsPaid'] ?? $order->IsPaid;
+        $order->Status = $validatedData['IsPaid'] ?? $order->Status;
         $order->PaymentDate = $order->IsPaid ? now() : $validatedData['PaymentDate'] ?? $order->PaymentDate;
         $order->save();
 
