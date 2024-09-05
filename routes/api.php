@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CatalogsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\auth\AuthController;
@@ -73,4 +74,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/orders/update/{orderId}', [OrderController::class, 'update'])->middleware('role:ADMINS');
     //User
     Route::post('/user/change-role', [UserController::class, 'changeUserRole']);
+
+    //Payment
+    Route::post('/orders/{orderId}/payments', [PaymentController::class, 'addPayment']);
 });
