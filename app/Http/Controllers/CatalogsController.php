@@ -41,7 +41,7 @@ class CatalogsController extends Controller
     {
         $catalog = Catalog::find($catalog);
         if (!$catalog) {
-            return response()->json(['message' => 'Client not found'], 404);
+            return response()->json(['message' => 'Catalog not found'], 404);
         }
         $validatedData = $request->validate([
             'Name' => 'sometimes|required|string|max:255',
@@ -49,6 +49,7 @@ class CatalogsController extends Controller
         ]);
 
         $catalog->update($validatedData);
+        $catalog->save();
 
         return response()->json([
             'message' => 'Catalog updated successfully!',

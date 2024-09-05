@@ -70,4 +70,18 @@ class CustomerController extends Controller
         $customer->delete();
         return response()->json(['message' => 'Customer deleted successfully']);
     }
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        if ($search) {
+            $customers = Customer::where('FullName', 'LIKE', '%' . $search . '%')
+                ->select('Id', 'FullName', 'Country', 'PhoneNumber', 'Email')
+                ->get();
+        } else {
+            $customers = Customer::paginate(5);
+        }
+
+        return response()->json(['search' => $customers]);
+    }
 }
