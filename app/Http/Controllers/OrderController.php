@@ -101,37 +101,37 @@ class OrderController extends Controller
         return response()->json($order->formatOrderDetails());
     }
 
-    public function markAsPaid(Request $request)
-    {
-        $validatedData = $request->validate([
-            'CustomerId' => 'required|integer',
-            'OrderId' => 'required|integer',
-        ]);
+    // public function markAsPaid(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'CustomerId' => 'required|integer',
+    //         'OrderId' => 'required|integer',
+    //     ]);
 
-        $CustomerId = $validatedData['CustomerId'];
-        $OrderId = $validatedData['OrderId'];
+    //     $CustomerId = $validatedData['CustomerId'];
+    //     $OrderId = $validatedData['OrderId'];
 
-        $order = Order::where('CustomerId', $CustomerId)
-            ->where('Id', $OrderId)
-            ->first();
+    //     $order = Order::where('CustomerId', $CustomerId)
+    //         ->where('Id', $OrderId)
+    //         ->first();
 
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
-        }
+    //     if (!$order) {
+    //         return response()->json(['message' => 'Order not found'], 404);
+    //     }
 
-        if ($order->IsPaid) {
-            return response()->json(['message' => 'Order is already paid'], 400);
-        }
+    //     if ($order->IsPaid) {
+    //         return response()->json(['message' => 'Order is already paid'], 400);
+    //     }
 
-        $order->IsPaid = true;
-        $order->PaymentDate = now();
-        $order->save();
+    //     $order->IsPaid = true;
+    //     $order->PaymentDate = now();
+    //     $order->save();
 
-        return response()->json([
-            'message' => 'Order marked as paid successfully',
-            'order' => $order->formatOrderDetails(),
-        ]);
-    }
+    //     return response()->json([
+    //         'message' => 'Order marked as paid successfully',
+    //         'order' => $order->formatOrderDetails(),
+    //     ]);
+    // }
 
     public function deleteOrder(Request $request)
     {

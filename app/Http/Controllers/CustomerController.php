@@ -52,14 +52,20 @@ class CustomerController extends Controller
 
         $customer->update($validatedData);
 
-        return response()->json(['message' => 'Customer updated successfully', 'client' => $customer]);
+        return response()->json([
+            'message' => 'Customer updated successfully',
+            'data' => $customer
+        ]);
     }
 
     public function show($customerId)
     {
         $customer = Customer::find($customerId);
         if (!$customer) {
-            return response()->json(['message' => 'Customer not found'], 404);
+            return response()->json([
+                'message' =>
+                'Customer not found'
+            ], 404);
         }
         return response()->json($customer);
     }
@@ -68,10 +74,16 @@ class CustomerController extends Controller
     {
         $customer = Customer::find($customerId);
         if (!$customer) {
-            return response()->json(['message' => 'Customer not found'], 404);
+            return response()->json([
+                'message' =>
+                'Customer not found'
+            ], 404);
         }
         $customer->delete();
-        return response()->json(['message' => 'Customer deleted successfully']);
+        return response()->json([
+            'message' =>
+            'Customer deleted successfully'
+        ]);
     }
     public function search(Request $request)
     {
@@ -100,6 +112,11 @@ class CustomerController extends Controller
             $customers = Customer::paginate($perPage, ['*'], 'page', $page);
         }
 
-        return response()->json(['search' => $customers]);
+        return response()->json(
+            [
+                'search' => $customers
+            ],
+            200
+        );
     }
 }

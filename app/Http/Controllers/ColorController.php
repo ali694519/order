@@ -38,9 +38,11 @@ class ColorController extends Controller
 
     public function getColors(Request $request, $catalogId)
     {
+        $perPage = $request->input('per_page', 5);
+        $page = $request->input('page', 1);
         $colors = Color::where('CatalogId', $catalogId)
             ->select('Id', 'Name', 'Quantity')
-            ->paginate(5);
+            ->paginate($perPage, ['*'], 'page', $page);
 
         return response()->json([
             'data' => $colors
@@ -66,6 +68,9 @@ class ColorController extends Controller
             $color->save();
         }
         return response()
-            ->json(['message' => 'Colors updated successfully']);
+            ->json([
+                'message' => 'Colors updated successfully',
+                'data' => $colors
+            ]);
     }
 }

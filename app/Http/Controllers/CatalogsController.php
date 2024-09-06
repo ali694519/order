@@ -96,6 +96,11 @@ class CatalogsController extends Controller
                 ->withSum('quantities as total_meters', 'Quantity')->paginate($perPage, ['*'], 'page', $page);
         }
 
-        return response()->json(['search' => $catalogs]);
+        return response()->json(
+            [
+                'search' => $catalogs
+            ],
+            200
+        );
     }
 }
