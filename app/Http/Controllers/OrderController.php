@@ -39,7 +39,7 @@ class OrderController extends Controller
         });
         $data = $orders->setCollection(collect($filteredOrders));
         return response()->json([
-            'orders' => $data
+            'data' => $data
         ]);
     }
     public function store(Request $request, $customerId)
@@ -226,7 +226,7 @@ class OrderController extends Controller
         });
         $data = $orders->setCollection(collect($filteredOrders));
         return response()->json([
-            'orders' => $data
+            'data' => $data
         ]);
     }
 }

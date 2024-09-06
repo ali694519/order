@@ -26,13 +26,19 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json(
+                $validator->errors(),
+                422
+            );
         }
         $credentials = $validator->validated();
         $user = User::where('Email', $credentials['Email'])->first();
 
         if (!$user || !Hash::check($credentials['PasswordHash'], $user->PasswordHash)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'error' =>
+                'Unauthorized'
+            ], 401);
         }
         $token = auth()->login($user);
         return $this->createNewToken($token);
