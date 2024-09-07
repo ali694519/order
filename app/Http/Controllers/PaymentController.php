@@ -51,14 +51,51 @@ class PaymentController extends Controller
         } else {
             $order->Status = 0; // Draft
         }
-
         $order->save();
-
         return response()->json([
             'message' => 'Payment added successfully',
             'payment' => $payment,
             'totalPaid' => $totalPayments + $validatedData['AmountPaid'],
             'orderStatus' => $order->Status,
         ], 201);
+    }
+
+    public function getCustomerStatementByCustomerId(Request $request, $customerId)
+    {
+        // $perPage = $request->input('per_page', 5);
+        // $page = $request->input('page', 1);
+
+        $orders = Order::where('CustomerId', $customerId)
+            ->with('items')
+            ->get();
+        if ($orders->isEmpty()) {
+            return response()->json(['message' => 'No orders found for this customer'], 404);
+        }
+
+        $customerStatement = [];
+
+        foreach ($orders as $order) {
+            $orderTotal = $order->items->sum(function ($item) {
+                return $item->CountOfMeters * $item->MeterPrice;
+            }) - $order->Discount;
+
+            $totalPayments = Payment::where('OrderId', $order->Id)->sum('AmountPaid');
+
+            $remainingAmount = $orderTotal - $totalPayments;
+
+            $customerStatement[] = [
+                'order_id' => $order->Id,
+                'order_total' => $orderTotal,
+                'total_paid' => $totalPayments,
+                'remaining_amount' => $remainingAmount,
+                'payments' => Payment::where('OrderId', $order->Id)
+                    ->get(['AmountPaid', 'PaymentMethod', 'PaymentDate']),
+            ];
+        }
+
+        return response()->json([
+            'customer_id' => $customerId,
+            'orders' => $customerStatement
+        ]);
     }
 }

@@ -77,4 +77,5 @@ Route::middleware(['auth:api'])->group(function () {
 
     //Payment
     Route::post('/orders/{orderId}/payments', [PaymentController::class, 'addPayment']);
+    Route::get('/customers/{customerId}/statement', [PaymentController::class, 'getCustomerStatementByCustomerId']);
 });

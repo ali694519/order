@@ -41,7 +41,16 @@ class AuthController extends Controller
             ], 401);
         }
         $token = auth()->login($user);
-        return $this->createNewToken($token);
+        return response()->json([
+            'message' => 'Login successful',
+            'data' => [
+                'Id' => $user->Id,
+                'Email' => $user->Email,
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60
+            ]
+        ]);
     }
 
     public function register(Request $request)
@@ -66,7 +75,11 @@ class AuthController extends Controller
         }
         return response()->json([
             'message' => 'User successfully registered',
-            'user' => $user
+            'data' => [
+                'Id' => $user->Id,
+                'Email' => $user->Email,
+                'UserName' => $user->UserName
+            ]
         ], 201);
     }
 
@@ -78,16 +91,13 @@ class AuthController extends Controller
     }
     public function userProfile()
     {
-        return response()->json(auth()->user());
-    }
+        $user = auth()->user();
 
-    protected function createNewToken($token)
-    {
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'Id' => $user->Id,
+            'Email' => $user->Email,
+            'UserName' => $user->UserName,
+            'PhoneNumber' => $user->PhoneNumber,
         ]);
     }
 }

@@ -28,7 +28,12 @@ class AccountController extends Controller
         $user->save();
         return response()->json([
             'message' => 'Email successfully updated',
-            'data' => $user
+            'data' => [
+                'Id' => $user->Id,
+                'Email' => $user->Email,
+                'UserName' => $user->UserName,
+                'PhoneNumber' => $user->PhoneNumber,
+            ]
         ]);
     }
 
