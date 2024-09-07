@@ -1,0 +1,2933 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Order Management API",
+        "description": "This API handles the management of customer orders",
+        "contact": {
+            "email": "aloshmohammad2001@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/catalogs": {
+            "get": {
+                "tags": [
+                    "Catalogs"
+                ],
+                "summary": "Get a list of catalogs",
+                "description": "Returns a paginated list of catalogs with their total meters",
+                "operationId": "3eab5932b76eb75193564b0d0a329052",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Catalogs"
+                ],
+                "summary": "Create a new catalog",
+                "description": "Creates a new catalog with a name and price",
+                "operationId": "ce0a540dcc5801a73182d44c59e67120",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "Name",
+                                    "Price"
+                                ],
+                                "properties": {
+                                    "Name": {
+                                        "type": "string",
+                                        "example": "New Catalog"
+                                    },
+                                    "Price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 50
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Catalog created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog created successfully!"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/catalogs/{catalog}": {
+            "get": {
+                "tags": [
+                    "Catalogs"
+                ],
+                "summary": "Get a catalog by ID",
+                "description": "Returns a specific catalog by its ID",
+                "operationId": "15985dc8f98d11b59dfad5fc93290ab0",
+                "parameters": [
+                    {
+                        "name": "catalog",
+                        "in": "path",
+                        "description": "ID of the catalog to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Catalog not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Catalogs"
+                ],
+                "summary": "Update an existing catalog",
+                "description": "Updates a catalog's name or price",
+                "operationId": "1a1eb993d889e71b864f2c9cf345cfed",
+                "parameters": [
+                    {
+                        "name": "catalog",
+                        "in": "path",
+                        "description": "ID of the catalog to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "Name": {
+                                        "type": "string",
+                                        "example": "Updated Catalog"
+                                    },
+                                    "Price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 60
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Catalog updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog updated successfully!"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Catalog not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Catalogs"
+                ],
+                "summary": "Delete a catalog",
+                "operationId": "b437e83778f2432bae8a6e4c4c4e742a",
+                "parameters": [
+                    {
+                        "name": "catalog",
+                        "in": "path",
+                        "description": "ID of the catalog to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Catalog deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog deleted successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Catalog not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/catalogs/search": {
+            "get": {
+                "tags": [
+                    "Catalogs"
+                ],
+                "summary": "Search catalogs",
+                "description": "Search for catalogs by name or price",
+                "operationId": "45037e0654684b0b5e3af219d40d4b53",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search query for catalogs",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "search": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/catalogs/{catalogId}/colors": {
+            "get": {
+                "tags": [
+                    "Colors"
+                ],
+                "summary": "Get colors of a catalog",
+                "description": "Retrieves a paginated list of colors for a specific catalog by its ID",
+                "operationId": "6bba1bb86fda5847786adb25137cb8ac",
+                "parameters": [
+                    {
+                        "name": "catalogId",
+                        "in": "path",
+                        "description": "ID of the catalog for which colors are to be retrieved",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "Id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "Name": {
+                                                                "type": "string",
+                                                                "example": "Red"
+                                                            },
+                                                            "Quantity": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 100
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Colors"
+                ],
+                "summary": "Add colors to a catalog",
+                "description": "Adds multiple colors to a specific catalog by its ID",
+                "operationId": "9f9080f16287bf08419c3239a25300b6",
+                "parameters": [
+                    {
+                        "name": "catalogId",
+                        "in": "path",
+                        "description": "ID of the catalog to which colors will be added",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "colors"
+                                ],
+                                "properties": {
+                                    "colors": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "Name",
+                                                "Quantity"
+                                            ],
+                                            "properties": {
+                                                "Name": {
+                                                    "type": "string",
+                                                    "example": "Red"
+                                                },
+                                                "Quantity": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Colors added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Color added successfully!"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "CatalogId": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "Name": {
+                                                        "type": "string",
+                                                        "example": "Red"
+                                                    },
+                                                    "Quantity": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 100
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Catalog not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/catalogs/{catalogId}/colors/update": {
+            "post": {
+                "tags": [
+                    "Colors"
+                ],
+                "summary": "Update colors for a catalog",
+                "description": "Updates the quantities of multiple colors for a specific catalog by its ID",
+                "operationId": "d494439c825470d5feb45ca1d54e3487",
+                "parameters": [
+                    {
+                        "name": "catalogId",
+                        "in": "path",
+                        "description": "ID of the catalog for which colors are to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "data"
+                                ],
+                                "properties": {
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "Id",
+                                                "Quantity"
+                                            ],
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "Quantity": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Colors updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Colors updated successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "Id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "Name": {
+                                                        "type": "string",
+                                                        "example": "Red"
+                                                    },
+                                                    "Quantity": {
+                                                        "type": "integer",
+                                                        "example": 150
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Catalog not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Catalog not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get a list of customers",
+                "description": "Returns a paginated list of customers with their details",
+                "operationId": "8acc5e9f5561eec1edbaf6a68f600e82",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "Id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "FullName": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "Country": {
+                                                                "type": "string",
+                                                                "example": "USA"
+                                                            },
+                                                            "PhoneNumber": {
+                                                                "type": "string",
+                                                                "example": "123-456-7890"
+                                                            },
+                                                            "Email": {
+                                                                "type": "string",
+                                                                "example": "john.doe@example.com"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Create a new customer",
+                "description": "Creates a new customer with the provided details",
+                "operationId": "428d5533c8386f91d2baf4de69f01468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "FullName",
+                                    "Email",
+                                    "Country",
+                                    "PhoneNumber",
+                                    "Address"
+                                ],
+                                "properties": {
+                                    "FullName": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "Email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "Country": {
+                                        "type": "string",
+                                        "example": "USA"
+                                    },
+                                    "PhoneNumber": {
+                                        "type": "string",
+                                        "example": "123-456-7890"
+                                    },
+                                    "Address": {
+                                        "type": "string",
+                                        "example": "123 Main St"
+                                    },
+                                    "Note": {
+                                        "type": "string",
+                                        "example": "Preferred customer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Customer created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Customer created successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "FullName": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "Email": {
+                                                    "type": "string",
+                                                    "example": "john.doe@example.com"
+                                                },
+                                                "Country": {
+                                                    "type": "string",
+                                                    "example": "USA"
+                                                },
+                                                "PhoneNumber": {
+                                                    "type": "string",
+                                                    "example": "123-456-7890"
+                                                },
+                                                "Address": {
+                                                    "type": "string",
+                                                    "example": "123 Main St"
+                                                },
+                                                "Note": {
+                                                    "type": "string",
+                                                    "example": "Preferred customer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/{customerId}": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get a customer by ID",
+                "description": "Returns a specific customer by their ID",
+                "operationId": "3a238222f5a7a531a2d646c0e0b66906",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "description": "ID of the customer to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "FullName": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "Email": {
+                                            "type": "string",
+                                            "example": "john.doe@example.com"
+                                        },
+                                        "Country": {
+                                            "type": "string",
+                                            "example": "USA"
+                                        },
+                                        "PhoneNumber": {
+                                            "type": "string",
+                                            "example": "123-456-7890"
+                                        },
+                                        "Address": {
+                                            "type": "string",
+                                            "example": "123 Main St"
+                                        },
+                                        "Note": {
+                                            "type": "string",
+                                            "example": "Preferred customer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Customer not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Customer not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Update a customer",
+                "description": "Updates an existing customer's details by their ID",
+                "operationId": "0235d7129ca9e98452bc0b5577194851",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "description": "ID of the customer to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "FullName": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "Email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "Country": {
+                                        "type": "string",
+                                        "example": "USA"
+                                    },
+                                    "PhoneNumber": {
+                                        "type": "string",
+                                        "example": "123-456-7890"
+                                    },
+                                    "Address": {
+                                        "type": "string",
+                                        "example": "123 Main St"
+                                    },
+                                    "Note": {
+                                        "type": "string",
+                                        "example": "Preferred customer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Customer updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Customer updated successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "FullName": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "Email": {
+                                                    "type": "string",
+                                                    "example": "john.doe@example.com"
+                                                },
+                                                "Country": {
+                                                    "type": "string",
+                                                    "example": "USA"
+                                                },
+                                                "PhoneNumber": {
+                                                    "type": "string",
+                                                    "example": "123-456-7890"
+                                                },
+                                                "Address": {
+                                                    "type": "string",
+                                                    "example": "123 Main St"
+                                                },
+                                                "Note": {
+                                                    "type": "string",
+                                                    "example": "Preferred customer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Customer not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Customer not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Delete a customer",
+                "description": "Deletes a customer by their ID",
+                "operationId": "b3bb3e211d3ae416fb908c7cd921300f",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "description": "ID of the customer to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Customer deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Customer not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Customer not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/search": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Search for customers",
+                "description": "Search for customers by various fields such as name, email, country, etc.",
+                "operationId": "36cbc04592be7f0051a44abe99503238",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search query for customers",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "search": {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "Id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "SeqNumber": {
+                                                                "type": "string",
+                                                                "example": "S123456"
+                                                            },
+                                                            "FullName": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "Country": {
+                                                                "type": "string",
+                                                                "example": "USA"
+                                                            },
+                                                            "PhoneNumber": {
+                                                                "type": "string",
+                                                                "example": "123-456-7890"
+                                                            },
+                                                            "Email": {
+                                                                "type": "string",
+                                                                "example": "john.doe@example.com"
+                                                            },
+                                                            "Address": {
+                                                                "type": "string",
+                                                                "example": "123 Main St"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/{customerId}/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get orders for a specific customer",
+                "description": "Retrieve a paginated list of orders for a given customer, including order details and calculated totals.",
+                "operationId": "de8f4be2a94432cc8efd9a63ed1e6dc9",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "description": "The ID of the customer for whom the orders are being retrieved.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to retrieve.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of orders for the specified customer.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "Number": {
+                                                                "type": "string"
+                                                            },
+                                                            "Date": {
+                                                                "type": "string",
+                                                                "format": "date"
+                                                            },
+                                                            "PaymentDate": {
+                                                                "type": "string",
+                                                                "format": "date"
+                                                            },
+                                                            "sub_total": {
+                                                                "type": "number",
+                                                                "format": "float"
+                                                            },
+                                                            "Discount": {
+                                                                "type": "number",
+                                                                "format": "float"
+                                                            },
+                                                            "total": {
+                                                                "type": "number",
+                                                                "format": "float"
+                                                            },
+                                                            "Note": {
+                                                                "type": "string"
+                                                            },
+                                                            "customer_name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/customers/1/orders?per_page=5&page=1"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/customers/1/orders?per_page=5&page=10"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/customers/1/orders?per_page=5&page=2"
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/customers/1/orders?per_page=5&page=0"
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_pages": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Customer not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Customer not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create a new order for a customer",
+                "description": "Create a new order for a specific customer, including order details and items.",
+                "operationId": "e4621b8333ecc0ba2fa5f89ec1315fbb",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "description": "The ID of the customer for whom the order is being created.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "Items"
+                                ],
+                                "properties": {
+                                    "Discount": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "Date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-09-01"
+                                    },
+                                    "PaymentDate": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-09-05"
+                                    },
+                                    "Note": {
+                                        "type": "string",
+                                        "example": "Order note here"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "Items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "Catalog",
+                                                "ColorNumber",
+                                                "CountOfMeters",
+                                                "MeterPrice"
+                                            ],
+                                            "properties": {
+                                                "Catalog": {
+                                                    "type": "string",
+                                                    "example": "Catalog name"
+                                                },
+                                                "ColorNumber": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "CountOfMeters": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10.5
+                                                },
+                                                "MeterPrice": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 20
+                                                },
+                                                "Note": {
+                                                    "type": "string",
+                                                    "example": "Item note here"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order created successfully"
+                                        },
+                                        "order": {
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "CustomerId": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "Discount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10
+                                                },
+                                                "Date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-09-01"
+                                                },
+                                                "PaymentDate": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-09-05"
+                                                },
+                                                "Note": {
+                                                    "type": "string",
+                                                    "example": "Order note here"
+                                                },
+                                                "Status": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "IsDeleted": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "Id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "OrderId": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "Catalog": {
+                                                        "type": "string",
+                                                        "example": "Catalog name"
+                                                    },
+                                                    "ColorNumber": {
+                                                        "type": "integer",
+                                                        "example": 123
+                                                    },
+                                                    "CountOfMeters": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 10.5
+                                                    },
+                                                    "MeterPrice": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 20
+                                                    },
+                                                    "Note": {
+                                                        "type": "string",
+                                                        "example": "Item note here"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/customers/order/details": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get details of a specific customer's order",
+                "description": "Retrieve the details of a specific order for a customer by providing customer ID and order ID.",
+                "operationId": "2a74d7e2824a70e76733b841d0645163",
+                "parameters": [
+                    {
+                        "name": "CustomerId",
+                        "in": "query",
+                        "description": "The ID of the customer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "OrderId",
+                        "in": "query",
+                        "description": "The ID of the order",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Id": {
+                                            "type": "integer"
+                                        },
+                                        "Number": {
+                                            "type": "string"
+                                        },
+                                        "Date": {
+                                            "type": "string",
+                                            "format": "date"
+                                        },
+                                        "PaymentDate": {
+                                            "type": "string",
+                                            "format": "date"
+                                        },
+                                        "Discount": {
+                                            "type": "number",
+                                            "format": "float"
+                                        },
+                                        "Note": {
+                                            "type": "string"
+                                        },
+                                        "customer_name": {
+                                            "type": "string"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "Id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "Catalog": {
+                                                        "type": "string"
+                                                    },
+                                                    "ColorNumber": {
+                                                        "type": "integer"
+                                                    },
+                                                    "CountOfMeters": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "MeterPrice": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "Note": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/order/delete": {
+            "delete": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Delete an order",
+                "description": "Delete a specific order based on CustomerId and OrderId.",
+                "operationId": "2b520921ed9f961562bbdc2d9012e1a5",
+                "parameters": [
+                    {
+                        "name": "CustomerId",
+                        "in": "query",
+                        "description": "ID of the customer who owns the order.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "OrderId",
+                        "in": "query",
+                        "description": "ID of the order to be deleted.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/update/{orderId}": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Update an existing order",
+                "description": "Update details of an existing order including its items.",
+                "operationId": "696ee898fd8e39a1b13b7482c088d715",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "path",
+                        "description": "The ID of the order to update.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "Discount": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "Date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-09-01"
+                                    },
+                                    "PaymentDate": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-09-05"
+                                    },
+                                    "Note": {
+                                        "type": "string",
+                                        "example": "Updated order note"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "Items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "Id",
+                                                "Catalog",
+                                                "ColorNumber",
+                                                "CountOfMeters",
+                                                "MeterPrice"
+                                            ],
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "Catalog": {
+                                                    "type": "string",
+                                                    "example": "Updated Catalog"
+                                                },
+                                                "ColorNumber": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "CountOfMeters": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12.5
+                                                },
+                                                "MeterPrice": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 25
+                                                },
+                                                "Note": {
+                                                    "type": "string",
+                                                    "example": "Updated item note"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order updated successfully"
+                                        },
+                                        "order": {
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "CustomerId": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "Discount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10
+                                                },
+                                                "Date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-09-01"
+                                                },
+                                                "PaymentDate": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-09-05"
+                                                },
+                                                "Note": {
+                                                    "type": "string",
+                                                    "example": "Updated order note"
+                                                },
+                                                "Status": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "IsDeleted": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "Id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "OrderId": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "Catalog": {
+                                                        "type": "string",
+                                                        "example": "Updated Catalog"
+                                                    },
+                                                    "ColorNumber": {
+                                                        "type": "integer",
+                                                        "example": 123
+                                                    },
+                                                    "CountOfMeters": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 12.5
+                                                    },
+                                                    "MeterPrice": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 25
+                                                    },
+                                                    "Note": {
+                                                        "type": "string",
+                                                        "example": "Updated item note"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get a list of orders",
+                "description": "Retrieve a paginated list of orders with their customer and item details.",
+                "operationId": "b20035ea428a4a9377c4a395600756ff",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of orders per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "Number": {
+                                                                "type": "string",
+                                                                "example": "ORD123"
+                                                            },
+                                                            "Date": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2024-09-01"
+                                                            },
+                                                            "PaymentDate": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2024-09-05"
+                                                            },
+                                                            "sub_total": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 250
+                                                            },
+                                                            "Discount": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 10
+                                                            },
+                                                            "total": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 240
+                                                            },
+                                                            "Note": {
+                                                                "type": "string",
+                                                                "example": "Order note here"
+                                                            },
+                                                            "customer_name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "/api/orders?page=1&per_page=5"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string",
+                                                    "example": "/api/orders?page=10&per_page=5"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": "/api/orders?page=2&per_page=5"
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": "/api/orders?page=0&per_page=5"
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/change-email": {
+            "post": {
+                "tags": [
+                    "Account Sittings"
+                ],
+                "summary": "Change user email",
+                "description": "Update the email address of the currently authenticated user.",
+                "operationId": "25a7f0535eee87440aa64acf85feb0c2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "Email"
+                                ],
+                                "properties": {
+                                    "Email": {
+                                        "description": "New email address for the user.",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "newemail@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email successfully updated"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "Email": {
+                                                    "type": "string",
+                                                    "example": "newemail@example.com"
+                                                },
+                                                "UserName": {
+                                                    "type": "string",
+                                                    "example": "newemail@example.com"
+                                                },
+                                                "PhoneNumber": {
+                                                    "type": "string",
+                                                    "example": "1234567890"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "Email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The Email has already been taken."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/change-password": {
+            "post": {
+                "tags": [
+                    "Account Sittings"
+                ],
+                "summary": "Change user password",
+                "description": "Allow the authenticated user to change their current password.",
+                "operationId": "8182e64143ac402312277ee28a7c9fc0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "description": "Current password of the user.",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "currentPassword123"
+                                    },
+                                    "new_password": {
+                                        "description": "New password for the user. Must be at least 6 characters long.",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newPassword123"
+                                    },
+                                    "new_password_confirmation": {
+                                        "description": "Confirmation of the new password.",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newPassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password successfully updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current password is incorrect",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Current password is incorrect"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "current_password": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The current password field is required."
+                                                    }
+                                                },
+                                                "new_password": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The new password field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/add-phone-number": {
+            "post": {
+                "tags": [
+                    "Account Sittings"
+                ],
+                "summary": "Add phone number to user profile",
+                "description": "Allow the authenticated user to add or update their phone number.",
+                "operationId": "d8ce9351b72968752de96e34a5d638f3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "PhoneNumber"
+                                ],
+                                "properties": {
+                                    "PhoneNumber": {
+                                        "description": "The phone number to be added or updated.",
+                                        "type": "string",
+                                        "example": "123-456-7890"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Phone number successfully added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Phone number successfully added"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "PhoneNumber": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The PhoneNumber field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User login",
+                "description": "Authenticates a user and returns an access token",
+                "operationId": "76d1c72ff2ae78653898b6c824ae1052",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "Email",
+                                    "PasswordHash"
+                                ],
+                                "properties": {
+                                    "Email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "PasswordHash": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "Email": {
+                                                    "type": "string",
+                                                    "example": "user@example.com"
+                                                },
+                                                "access_token": {
+                                                    "type": "string",
+                                                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2MzEzMjE0NDIsImV4cCI6MTYzMTMyNzg0Mn0.Swbd_YR-W-Z0pSC4wwk3kc0AG9-tMjErVVy5Lzo2GFE"
+                                                },
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "bearer"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 3600
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Email": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "The Email field is required."
+                                            ]
+                                        },
+                                        "PasswordHash": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "The PasswordHash field is required."
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User registration",
+                "description": "Registers a new user with email and password",
+                "operationId": "f7b764046edccb973b3a31d08cbbaf6f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "Email",
+                                    "PasswordHash",
+                                    "PasswordHash_confirmation"
+                                ],
+                                "properties": {
+                                    "Email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "PasswordHash": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "PasswordHash_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User successfully registered",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully registered"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "Id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "Email": {
+                                                    "type": "string",
+                                                    "example": "user@example.com"
+                                                },
+                                                "UserName": {
+                                                    "type": "string",
+                                                    "example": "username"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Email": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "The Email field is required."
+                                            ]
+                                        },
+                                        "PasswordHash": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "The PasswordHash field is required.",
+                                                "The PasswordHash confirmation does not match."
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout the current user",
+                "description": "Logs out the currently authenticated user and invalidates their token",
+                "operationId": "80c06caa840cb720ab763a4c1626d58e",
+                "responses": {
+                    "200": {
+                        "description": "Successful logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully signed out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user-profile": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get user profile",
+                "description": "Retrieve the profile information of the currently authenticated user",
+                "operationId": "79384d093365bb71a0b8298f1bfeedce",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "Email": {
+                                            "type": "string",
+                                            "example": "user@example.com"
+                                        },
+                                        "UserName": {
+                                            "type": "string",
+                                            "example": "username"
+                                        },
+                                        "PhoneNumber": {
+                                            "type": "string",
+                                            "example": "123-456-7890"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/change-role": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Change user role",
+                "description": "Update the role of a user. The role will be assigned to the user based on the provided role name.",
+                "operationId": "be3368367109d127080eafbe9c212077",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "userId",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "userId": {
+                                        "description": "ID of the user whose role is to be updated",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "role": {
+                                        "description": "Name of the role to be assigned",
+                                        "type": "string",
+                                        "example": "ADMIN"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User role updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User role updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found or User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Catalogs",
+            "description": "Catalogs"
+        },
+        {
+            "name": "Colors",
+            "description": "Colors"
+        },
+        {
+            "name": "Customers",
+            "description": "Customers"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
+        },
+        {
+            "name": "Account Sittings",
+            "description": "Account Sittings"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        }
+    ]
+}

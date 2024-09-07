@@ -10,6 +10,44 @@ use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/user/change-role",
+     *     summary="Change user role",
+     *     description="Update the role of a user. The role will be assigned to the user based on the provided role name.",
+     * *     tags={"Authentication"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"userId", "role"},
+     *             @OA\Property(property="userId", type="integer", example=1, description="ID of the user whose role is to be updated"),
+     *             @OA\Property(property="role", type="string", example="ADMIN", description="Name of the role to be assigned")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User role updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User role updated successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Role not found or User not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Role not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid.")
+     *         )
+     *     )
+     * )
+     */
     public function changeUserRole(Request $request)
     {
         $validatedData = $request->validate([

@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\AccountController;
 |
 */
 
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -44,10 +45,10 @@ Route::middleware(['auth:api'])->group(function () {
     //Catalogs
     Route::get('/catalogs', [CatalogsController::class, 'get']);
     Route::post('/catalogs', [CatalogsController::class, 'create']);
-    Route::get('/catalog/{catalog}', [CatalogsController::class, 'show']);
+    Route::get('/catalogs/{catalog}', [CatalogsController::class, 'show']);
     Route::post('/catalogs/{catalog}', [CatalogsController::class, 'update']);
     Route::delete('/catalogs/{catalog}', [CatalogsController::class, 'delete']);
-    Route::get('/search/catalogs', [CatalogsController::class, 'search']);
+    Route::get('/catalogs/search', [CatalogsController::class, 'search']);
 
 
     //Quantity
@@ -61,17 +62,18 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/customers', [CustomerController::class, 'store']);
     Route::post('/customers/{customerId}', [CustomerController::class, 'update']);
     Route::delete('/customers/{customerId}', [CustomerController::class, 'destroy']);
-    Route::get('/search/customers', [CustomerController::class, 'search']);
+    Route::get('/customers/search', [CustomerController::class, 'search']);
 
     //Orders
     Route::post('/customers/{customerId}/orders', [OrderController::class, 'store'])->middleware('role:ADMINS');
     Route::get('/customers/{customerId}/orders', [OrderController::class, 'getInfo']);
-    Route::get('/customers/order/details', [OrderController::class, 'details']);
+    Route::get('/customers/order/details', [OrderController::class, 'getCustomerOrders']);
     Route::post('/order/pay', [OrderController::class, 'markAsPaid']);
     Route::delete('/order/delete', [OrderController::class, 'deleteOrder']);
 
     Route::get('/orders', [OrderController::class, 'get']);
     Route::post('/orders/update/{orderId}', [OrderController::class, 'update'])->middleware('role:ADMINS');
+
     //User
     Route::post('/user/change-role', [UserController::class, 'changeUserRole']);
 
