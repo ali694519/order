@@ -79,11 +79,9 @@ class AuthController extends Controller
     }
     $credentials = $validator->validated();
     $user = User::where('Email', $credentials['Email'])->first();
-
     if (!$user || !Hash::check($credentials['PasswordHash'], $user->PasswordHash)) {
       return response()->json([
-        'error' =>
-        'Unauthorized'
+        'error' => 'Unauthorized'
       ], 401);
     }
     $token = auth()->login($user);

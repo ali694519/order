@@ -155,7 +155,7 @@ class PasswordResetController extends Controller
     }
 
     $user = User::where('Email', $request->email)->first();
-    $user->PasswordHash = Hash::make($request->password);
+    $user->PasswordHash = Hash::make($request->PasswordHash);
     $user->save();
 
     DB::table('password_reset_tokens')->where('email', $request->email)->delete();
