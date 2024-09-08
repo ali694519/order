@@ -9,6 +9,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\auth\UserController;
 use App\Http\Controllers\Auth\AccountController;
+use App\Http\Controllers\auth\PasswordResetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,8 @@ Route::group([
   Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 Route::middleware(['auth:api'])->group(function () {
 
