@@ -236,7 +236,7 @@ class CatalogsController extends Controller
   }
   /**
    * @OA\Get(
-   *     path="/api/catalogs/search",
+   *     path="/api/search/catalogs",
    *     summary="Search catalogs",
    *     description="Search for catalogs by name or price",
    *     tags={"Catalogs"},
@@ -289,7 +289,6 @@ class CatalogsController extends Controller
     if ($search) {
       $catalogs = Catalog::where('Name', 'LIKE', '%' . $search . '%')
         ->orWhere('Price', 'LIKE', '%' . $search . '%')
-        ->select('Name', 'Price')
         ->paginate($perPage, ['*'], 'page', $page);
     } else {
       $catalogs =

@@ -301,7 +301,7 @@ class CustomerController extends Controller
   }
   /**
    * @OA\Get(
-   *     path="/api/customers/search",
+   *     path="/api/search/customers",
    *     summary="Search for customers",
    *     description="Search for customers by various fields such as name, email, country, etc.",
    * * tags={"Customers"},
