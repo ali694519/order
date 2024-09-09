@@ -72,7 +72,11 @@ Route::middleware(['auth:api'])->group(function () {
   Route::get('/customers/{customerId}/orders', [OrderController::class, 'getInfo']);
   Route::get('/customers/order/details', [OrderController::class, 'getCustomerOrders']);
   Route::post('/order/pay', [OrderController::class, 'markAsPaid']);
+  Route::delete('/order/delete-permanently', [OrderController::class, 'deleteOrderPermanently']);
   Route::delete('/order/delete', [OrderController::class, 'deleteOrder']);
+  Route::get('/orders/deleted', [OrderController::class, 'getDeletedOrders']);
+  Route::patch('/orders/restore', [OrderController::class, 'restoreOrders']);
+
   Route::get('/orders/search', [OrderController::class, 'searchOrdersByDate']);
 
   Route::get('/orders', [OrderController::class, 'get']);

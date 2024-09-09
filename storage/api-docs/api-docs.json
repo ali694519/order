@@ -364,14 +364,14 @@
                 }
             }
         },
-        "/api/catalogs/search": {
+        "/api/search/catalogs": {
             "get": {
                 "tags": [
                     "Catalogs"
                 ],
                 "summary": "Search catalogs",
                 "description": "Search for catalogs by name or price",
-                "operationId": "45037e0654684b0b5e3af219d40d4b53",
+                "operationId": "bea6a4fca8bba33a7f2d5a8e7ebc296b",
                 "parameters": [
                     {
                         "name": "search",
@@ -1261,14 +1261,14 @@
                 }
             }
         },
-        "/api/customers/search": {
+        "/api/search/customers": {
             "get": {
                 "tags": [
                     "Customers"
                 ],
                 "summary": "Search for customers",
                 "description": "Search for customers by various fields such as name, email, country, etc.",
-                "operationId": "36cbc04592be7f0051a44abe99503238",
+                "operationId": "8730b5ca0a9e8d753b7ca6467f5ab8f4",
                 "parameters": [
                     {
                         "name": "search",
@@ -1926,6 +1926,91 @@
                 ]
             }
         },
+        "/api/order/delete-permanently": {
+            "delete": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Permanently delete an order",
+                "description": "Permanently delete a specific order based on CustomerId and OrderId.",
+                "operationId": "298f4d3529e0968b008863c7598e5bbd",
+                "parameters": [
+                    {
+                        "name": "CustomerId",
+                        "in": "query",
+                        "description": "ID of the customer who owns the order.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "OrderId",
+                        "in": "query",
+                        "description": "ID of the order to be deleted.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order permanently deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order permanently deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/orders/update/{orderId}": {
             "post": {
                 "tags": [
@@ -2425,6 +2510,190 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/orders/deleted": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get all deleted orders",
+                "description": "Retrieve all orders that have been marked as deleted.",
+                "operationId": "1d0baaff2c051d73823df20a248aaef3",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of deleted orders",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "Number": {
+                                                        "type": "string"
+                                                    },
+                                                    "Date": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "PaymentDate": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "sub_total": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "Discount": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "total": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "Note": {
+                                                        "type": "string"
+                                                    },
+                                                    "customer_name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/restore": {
+            "patch": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Restore deleted orders for a customer",
+                "description": "Restore all orders marked as deleted for a specific customer by setting IsDeleted to false.",
+                "operationId": "bbd6e640fc2457f06788673d09b5cb54",
+                "parameters": [
+                    {
+                        "name": "CustomerId",
+                        "in": "query",
+                        "description": "ID of the customer whose deleted orders are to be restored.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Orders successfully restored",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Orders restored successfully"
+                                        },
+                                        "restored_count": {
+                                            "type": "integer",
+                                            "example": 5
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Orders not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No deleted orders found for this customer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/orders/{orderId}/payments": {

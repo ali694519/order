@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\Order;
-use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -115,6 +114,7 @@ class OrderController extends Controller
       'customer:Id,FullName',
       'items:Id,OrderId,CountOfMeters,MeterPrice'
     ])->where('CustomerId', $customerId)
+      ->where('IsDeleted', false)
       ->paginate($perPage, ['*'], 'page', $page);
 
     $filteredOrders = $orders->map(function ($order) {
@@ -357,6 +357,7 @@ class OrderController extends Controller
       'items:Id,OrderId,Catalog,ColorNumber,CountOfMeters,MeterPrice'
     ])->where('CustomerId', $CustomerId)
       ->where('Id', $OrderId)
+      ->where('IsDeleted', false)
       ->first();
     if (!$order) {
       return response()->json(['message' => 'Order not found'], 404);
@@ -420,6 +421,73 @@ class OrderController extends Controller
     $order = Order::where('CustomerId', $CustomerId)
       ->where('Id', $OrderId)
       ->first();
+    if (!$order) {
+      return response()->json(['message' => 'Order not found'], 404);
+    }
+    // $order->delete();
+    $order->IsDeleted = true;
+    $order->save();
+
+    return response()->json(['message' => 'Order deleted successfully']);
+  }
+
+  /**
+   * @OA\Delete(
+   *     path="/api/order/delete-permanently",
+   *     summary="Permanently delete an order",
+   *     description="Permanently delete a specific order based on CustomerId and OrderId.",
+   *     tags={"Orders"},
+   *     security={{"bearerAuth": {}}},
+   *     @OA\Parameter(
+   *         name="CustomerId",
+   *         in="query",
+   *         description="ID of the customer who owns the order.",
+   *         required=true,
+   *         @OA\Schema(type="integer")
+   *     ),
+   *     @OA\Parameter(
+   *         name="OrderId",
+   *         in="query",
+   *         description="ID of the order to be deleted.",
+   *         required=true,
+   *         @OA\Schema(type="integer")
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Order permanently deleted successfully",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="message", type="string", example="Order permanently deleted successfully")
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=404,
+   *         description="Order not found",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="message", type="string", example="Order not found")
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="error", type="string", example="Unauthorized")
+   *         )
+   *     )
+   * )
+   */
+  public function deleteOrderPermanently(Request $request)
+  {
+    $validatedData = $request->validate([
+      'CustomerId' => 'required|integer',
+      'OrderId' => 'required|integer',
+    ]);
+
+    $CustomerId = $validatedData['CustomerId'];
+    $OrderId = $validatedData['OrderId'];
+
+    $order = Order::where('CustomerId', $CustomerId)
+      ->where('Id', $OrderId)
+      ->first();
 
     if (!$order) {
       return response()->json(['message' => 'Order not found'], 404);
@@ -427,7 +495,7 @@ class OrderController extends Controller
 
     $order->delete();
 
-    return response()->json(['message' => 'Order deleted successfully']);
+    return response()->json(['message' => 'Order permanently deleted successfully']);
   }
   /**
    * @OA\Post(
@@ -684,7 +752,8 @@ class OrderController extends Controller
     $orders = Order::with([
       'customer:Id,FullName',
       'items:Id,OrderId,CountOfMeters,MeterPrice'
-    ])->paginate($perPage, ['*'], 'page', $page);
+    ])->where('IsDeleted', false)
+      ->paginate($perPage, ['*'], 'page', $page);
 
     $filteredOrders = $orders->map(function ($order) {
       $sub_total = $order->items->sum(function ($item) {
@@ -794,6 +863,7 @@ class OrderController extends Controller
       'customer:Id,FullName',
       'items:Id,OrderId,Catalog,ColorNumber,CountOfMeters,MeterPrice'
     ])->whereBetween('Date', [$startDate, $endDate])
+      ->where('IsDeleted', false)
       ->paginate($perPage, ['*'], 'page', $page);
 
     $filteredOrders = $orders->map(function ($order) {
@@ -815,6 +885,146 @@ class OrderController extends Controller
     $data = $orders->setCollection(collect($filteredOrders));
     return response()->json([
       'data' => $data
+    ]);
+  }
+
+  /**
+   * @OA\Get(
+   *     path="/api/orders/deleted",
+   *     summary="Get all deleted orders",
+   *     description="Retrieve all orders that have been marked as deleted.",
+   *     tags={"Orders"},
+   *     security={{"bearerAuth": {}}},
+   *     @OA\Parameter(
+   *         name="per_page",
+   *         in="query",
+   *         description="Number of results per page.",
+   *         required=false,
+   *         @OA\Schema(type="integer", default=5)
+   *     ),
+   *     @OA\Parameter(
+   *         name="page",
+   *         in="query",
+   *         description="Page number for pagination.",
+   *         required=false,
+   *         @OA\Schema(type="integer", default=1)
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="List of deleted orders",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="data", type="array", @OA\Items(
+   *                 @OA\Property(property="Number", type="string"),
+   *                 @OA\Property(property="Date", type="string", format="date-time"),
+   *                 @OA\Property(property="PaymentDate", type="string", format="date-time"),
+   *                 @OA\Property(property="sub_total", type="number", format="float"),
+   *                 @OA\Property(property="Discount", type="number", format="float"),
+   *                 @OA\Property(property="total", type="number", format="float"),
+   *                 @OA\Property(property="Note", type="string"),
+   *                 @OA\Property(property="customer_name", type="string")
+   *             ))
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="error", type="string", example="Unauthorized")
+   *         )
+   *     )
+   * )
+   */
+  public function getDeletedOrders(Request $request)
+  {
+    $perPage = $request->input('per_page', 5);
+    $page = $request->input('page', 1);
+
+    $orders = Order::with([
+      'customer:Id,FullName',
+      'items:Id,OrderId,CountOfMeters,MeterPrice'
+    ])->where('IsDeleted', true)
+      ->paginate($perPage, ['*'], 'page', $page);
+
+    $filteredOrders = $orders->map(function ($order) {
+      $sub_total = $order->items->sum(function ($item) {
+        return $item->CountOfMeters * $item->MeterPrice;
+      });
+      $total = $sub_total - $order->Discount;
+      return [
+        'Number' => $order->Number,
+        'Date' => $order->Date,
+        'PaymentDate' => $order->PaymentDate,
+        'sub_total' => $sub_total,
+        'Discount' => $order->Discount,
+        'total' => $total,
+        'Note' => $order->Note,
+        'customer_name' => $order->customer->FullName,
+      ];
+    });
+    $data = $orders->setCollection(collect($filteredOrders));
+    return response()->json([
+      'data' => $data
+    ]);
+  }
+  /**
+   * @OA\Patch(
+   *     path="/api/orders/restore",
+   *     summary="Restore deleted orders for a customer",
+   *     description="Restore all orders marked as deleted for a specific customer by setting IsDeleted to false.",
+   *     tags={"Orders"},
+   *     security={{"bearerAuth": {}}},
+   *     @OA\Parameter(
+   *         name="CustomerId",
+   *         in="query",
+   *         description="ID of the customer whose deleted orders are to be restored.",
+   *         required=true,
+   *         @OA\Schema(type="integer")
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Orders successfully restored",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="message", type="string", example="Orders restored successfully"),
+   *             @OA\Property(property="restored_count", type="integer", example=5)
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=404,
+   *         description="Orders not found",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="message", type="string", example="No deleted orders found for this customer")
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="error", type="string", example="Unauthorized")
+   *         )
+   *     )
+   * )
+   */
+  public function restoreOrders(Request $request)
+  {
+    $validatedData = $request->validate([
+      'CustomerId' => 'required|integer',
+    ]);
+    $CustomerId = $validatedData['CustomerId'];
+    $orders = Order::where('CustomerId', $CustomerId)
+      ->where('IsDeleted', true)
+      ->get();
+    if ($orders->isEmpty()) {
+      return response()->json([
+        'message' => 'No deleted orders found for this customer'
+      ], 404);
+    }
+    foreach ($orders as $order) {
+      $order->IsDeleted = false;
+      $order->save();
+    }
+    return response()->json([
+      'message' => 'Orders restored successfully',
+      'restored_count' => $orders->count(),
     ]);
   }
 }
