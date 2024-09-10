@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\Order;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -262,6 +263,11 @@ class OrderController extends Controller
       'Items.*.MeterPrice' => 'required|numeric',
       'Items.*.Note' => 'nullable|string',
     ]);
+
+    if (!Customer::find($customerId)) {
+      return response()->json(['message' => 'Customer not found'], 404);
+    }
+
     $order = new Order();
     $order->CustomerId = $customerId;
     $order->Discount = $validatedData['Discount'] ?? 0;
