@@ -190,7 +190,6 @@ class PaymentController extends Controller
     ]);
   }
 
-
   /**
    * @OA\Get(
    *     path="/api/payments/paid-orders",
