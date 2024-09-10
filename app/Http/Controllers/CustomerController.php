@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -120,7 +121,10 @@ class CustomerController extends Controller
       'Address' => 'required|string|max:255',
       'Note' => 'nullable|string|max:1000'
     ]);
+    $maxId = DB::table('Customer')->max('Id');
+    $validatedData['Id'] = $maxId + 1;
     $customer = Customer::create($validatedData);
+    $customer = Customer::find($validatedData['Id']);
     return response()->json([
       'message' => 'Customer created successfully',
       'data' => $customer

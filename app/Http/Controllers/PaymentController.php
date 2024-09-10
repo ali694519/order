@@ -189,4 +189,120 @@ class PaymentController extends Controller
       'orders' => $customerStatement
     ]);
   }
+
+
+  /**
+   * @OA\Get(
+   *     path="/api/payments/paid-orders",
+   *     summary="Get paid orders by date",
+   *     description="Retrieve all orders that have been paid in full on a specific date.",
+   *     tags={"Payments"},
+   *     security={{"bearerAuth": {}}},
+   *     @OA\Parameter(
+   *         name="date",
+   *         in="query",
+   *         description="Date to filter the paid orders. Format should be YYYY-MM-DD.",
+   *         required=true,
+   *         @OA\Schema(type="string", format="date")
+   *     ),
+   *     @OA\Parameter(
+   *         name="per_page",
+   *         in="query",
+   *         description="Number of items per page.",
+   *         required=false,
+   *         @OA\Schema(type="integer", default=5)
+   *     ),
+   *     @OA\Parameter(
+   *         name="page",
+   *         in="query",
+   *         description="Page number for pagination.",
+   *         required=false,
+   *         @OA\Schema(type="integer", default=1)
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Paid orders retrieved successfully",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="data", type="array", @OA\Items(
+   *                 @OA\Property(property="Number", type="string"),
+   *                 @OA\Property(property="order_date", type="string", format="date"),
+   *                 @OA\Property(property="payment_date", type="string", format="date"),
+   *                 @OA\Property(property="sub_total", type="number", format="float"),
+   *                 @OA\Property(property="Discount", type="number", format="float"),
+   *                 @OA\Property(property="total", type="number", format="float"),
+   *                 @OA\Property(property="customer_name", type="string")
+   *             )),
+   *             @OA\Property(property="total_amount", type="number", format="float"),
+   *             @OA\Property(property="final_amount", type="number", format="float")
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=404,
+   *         description="No payments found for the specified date",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="message", type="string", example="No payments found for this date")
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="error", type="string", example="Unauthorized")
+   *         )
+   *     )
+   * )
+   */
+
+  public function getPaidOrdersByDate(Request $request)
+  {
+    $perPage = $request->query('per_page', 5);
+    $page = $request->query('page', 1);
+    $date = $request->query('date');
+    if (!$date) {
+      return response()->json([
+        'message' => 'Date parameter is required'
+      ], 400);
+    }
+    $payments = Payment::where('PaymentDate', $date)->get();
+    if ($payments->isEmpty()) {
+      return response()->json([
+        'message' => 'No payments found for this date'
+      ], 404);
+    }
+    $orderIds = $payments->pluck('OrderId')->unique();
+    $orders = Order::with([
+      'customer:Id,FullName',
+      'items:Id,OrderId,CountOfMeters,MeterPrice'
+    ])
+      ->whereIn('Id', $orderIds)
+      ->where('IsDeleted', false)
+      ->paginate($perPage, ['*'], 'page', $page);
+    $formattedOrders  = $orders->map(function ($order) use ($date, $payments) {
+      $sub_total = $order->items->sum(function ($item) {
+        return $item->CountOfMeters * $item->MeterPrice;
+      });
+      $total = $sub_total - $order->Discount;
+      $totalPaid = $payments->where('OrderId', $order->Id)->sum('AmountPaid');
+      if ($totalPaid >= $total) {
+        return [
+          'Number' => $order->Number,
+          'order_date' => $order->Date,
+          'payment_date' => $date,
+          'sub_total' => $sub_total,
+          'Discount' => $order->Discount,
+          'total' => $total,
+          'customer_name' => $order->customer->FullName,
+        ];
+      }
+    })->filter();
+    $data = $orders->setCollection(collect($formattedOrders));
+    $totalAmount = $formattedOrders->sum('sub_total');
+    $finalAmount = $formattedOrders->sum('total');
+
+    return response()->json([
+      'data' => $data,
+      'total_amount' => $totalAmount,
+      'final_amount' => $finalAmount,
+    ]);
+  }
 }
