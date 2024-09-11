@@ -15,6 +15,7 @@ class CatalogsController extends Controller
    *     summary="Get a list of catalogs",
    *     description="Returns a paginated list of catalogs with their total meters",
    *     tags={"Catalogs"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="per_page",
    *         in="query",
@@ -68,6 +69,7 @@ class CatalogsController extends Controller
    *     summary="Create a new catalog",
    *     description="Creates a new catalog with a name and price",
    *  *     tags={"Catalogs"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\RequestBody(
    *         required=true,
    *         @OA\JsonContent(
@@ -109,6 +111,7 @@ class CatalogsController extends Controller
    *     summary="Update an existing catalog",
    *     description="Updates a catalog's name or price",
    *  *     tags={"Catalogs"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="catalog",
    *         in="path",
@@ -167,6 +170,7 @@ class CatalogsController extends Controller
    *     summary="Get a catalog by ID",
    *     description="Returns a specific catalog by its ID",
    *  *     tags={"Catalogs"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="catalog",
    *         in="path",
@@ -203,6 +207,7 @@ class CatalogsController extends Controller
    *     path="/api/catalogs/{catalog}",
    *     summary="Delete a catalog",
    *  *     tags={"Catalogs"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="catalog",
    *         in="path",
@@ -240,6 +245,7 @@ class CatalogsController extends Controller
    *     summary="Search catalogs",
    *     description="Search for catalogs by name or price",
    *     tags={"Catalogs"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="search",
    *         in="query",

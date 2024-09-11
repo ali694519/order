@@ -15,6 +15,7 @@ class ColorController extends Controller
    *     summary="Add colors to a catalog",
    *     description="Adds multiple colors to a specific catalog by its ID",
    *     tags={"Colors"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="catalogId",
    *         in="path",
@@ -100,6 +101,7 @@ class ColorController extends Controller
    *     summary="Get colors of a catalog",
    *     description="Retrieves a paginated list of colors for a specific catalog by its ID",
    *   *     tags={"Colors"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="catalogId",
    *         in="path",
@@ -164,6 +166,7 @@ class ColorController extends Controller
    *     summary="Update colors for a catalog",
    *     description="Updates the quantities of multiple colors for a specific catalog by its ID",
    *     tags={"Colors"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="catalogId",
    *         in="path",

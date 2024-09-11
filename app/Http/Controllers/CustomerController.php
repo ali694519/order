@@ -14,6 +14,7 @@ class CustomerController extends Controller
    *     summary="Get a list of customers",
    *     description="Returns a paginated list of customers with their details",
    *   *      tags={"Customers"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="per_page",
    *         in="query",
@@ -72,6 +73,7 @@ class CustomerController extends Controller
    *     summary="Create a new customer",
    *     description="Creates a new customer with the provided details",
    *   * tags={"Customers"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\RequestBody(
    *         required=true,
    *         @OA\JsonContent(
@@ -137,6 +139,7 @@ class CustomerController extends Controller
    *     summary="Update a customer",
    *     description="Updates an existing customer's details by their ID",
    *  * tags={"Customers"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="customerId",
    *         in="path",
@@ -218,6 +221,7 @@ class CustomerController extends Controller
    *     summary="Get a customer by ID",
    *     description="Returns a specific customer by their ID",
    * * tags={"Customers"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="customerId",
    *         in="path",
@@ -265,6 +269,7 @@ class CustomerController extends Controller
    *     summary="Delete a customer",
    *     description="Deletes a customer by their ID",
    * * tags={"Customers"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="customerId",
    *         in="path",
@@ -309,6 +314,7 @@ class CustomerController extends Controller
    *     summary="Search for customers",
    *     description="Search for customers by various fields such as name, email, country, etc.",
    * * tags={"Customers"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="search",
    *         in="query",

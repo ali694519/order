@@ -13,6 +13,7 @@ class PaymentController extends Controller
    *     path="/orders/{orderId}/payments",
    *     summary="Add payment to an order",
    *     tags={"Payments"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="orderId",
    *         in="path",
@@ -116,6 +117,7 @@ class PaymentController extends Controller
    *     path="/customers/{customerId}/statement",
    *     summary="Get customer statement by customer ID",
    *     tags={"Customers"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="customerId",
    *         in="path",

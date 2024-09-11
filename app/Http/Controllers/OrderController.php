@@ -294,6 +294,7 @@ class OrderController extends Controller
    *     summary="Get details of a specific customer's order",
    *     description="Retrieve the details of a specific order for a customer by providing customer ID and order ID.",
    *     tags={"Orders"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="CustomerId",
    *         in="query",
@@ -789,6 +790,7 @@ class OrderController extends Controller
    *     summary="Search orders within a date range",
    *     description="Retrieve orders placed between the specified start date and end date.",
    *     tags={"Orders"},
+   *  *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="start_date",
    *         in="query",
