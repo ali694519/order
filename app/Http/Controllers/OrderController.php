@@ -1035,4 +1035,110 @@ class OrderController extends Controller
       'restored_count' => $orders->count(),
     ]);
   }
+  /**
+   * @OA\Get(
+   *     path="/api/orders/status",
+   *     summary="Get orders by status with pagination.",
+   *     description="Retrieve a list of orders by status with pagination.",
+   *     tags={"Orders"},
+   *     security={{"bearerAuth": {}}},
+   *     @OA\Parameter(
+   *         name="status",
+   *         in="query",
+   *         description="Order status (0, 1, 2).",
+   *         required=true,
+   *         @OA\Schema(type="integer", example=1)
+   *     ),
+   *     @OA\Parameter(
+   *         name="per_page",
+   *         in="query",
+   *         description="Number of orders per page.",
+   *         required=false,
+   *         @OA\Schema(type="integer", example=5)
+   *     ),
+   *     @OA\Parameter(
+   *         name="page",
+   *         in="query",
+   *         description="Page number for pagination.",
+   *         required=false,
+   *         @OA\Schema(type="integer", example=1)
+   *     ),
+   *     @OA\Response(
+   *         response=200,
+   *         description="Successful response",
+   *         @OA\JsonContent(
+   *             @OA\Property(
+   *                 property="current_page",
+   *                 type="integer",
+   *                 example=1
+   *             ),
+   *             @OA\Property(
+   *                 property="data",
+   *                 type="array",
+   *                 @OA\Items(
+   *                     @OA\Property(property="Number", type="string", example="ORD123"),
+   *                     @OA\Property(property="Date", type="string", format="date", example="2024-09-01"),
+   *                     @OA\Property(property="PaymentDate", type="string", format="date", example="2024-09-05"),
+   *                     @OA\Property(property="sub_total", type="number", format="float", example=250.0),
+   *                     @OA\Property(property="Discount", type="number", format="float", example=10.0),
+   *                     @OA\Property(property="total", type="number", format="float", example=240.0),
+   *                     @OA\Property(property="Note", type="string", example="Order note here"),
+   *                     @OA\Property(property="Status", type="integer", example=2),
+   *                     @OA\Property(property="customer_name", type="string", example="John Doe")
+   *                 )
+   *             ),
+   *             @OA\Property(property="total", type="integer", example=50),
+   *             @OA\Property(property="per_page", type="integer", example=5),
+   *             @OA\Property(property="last_page", type="integer", example=10),
+   *             @OA\Property(property="first_page_url", type="string", example="/api/orders/status?page=1&per_page=5"),
+   *             @OA\Property(property="last_page_url", type="string", example="/api/orders/status?page=10&per_page=5"),
+   *             @OA\Property(property="next_page_url", type="string", example="/api/orders/status?page=2&per_page=5"),
+   *             @OA\Property(property="prev_page_url", type="string", example="/api/orders/status?page=0&per_page=5"),
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="error", type="string", example="Unauthorized")
+   *         )
+   *     )
+   * )
+   */
+  public function getByStatus(Request $request)
+  {
+    $request->validate([
+      'status' => 'required|in:0,1,2'
+    ]);
+
+    $status = $request->input('status');
+    $perPage = $request->input('per_page', 5);
+    $page = $request->input('page', 1);
+
+    $orders = Order::with(['customer:Id,FullName', 'items:Id,OrderId,CountOfMeters,MeterPrice'])
+      ->where('Status', $status)
+      ->where('IsDeleted', false)
+      ->paginate($perPage, ['*'], 'page', $page);
+
+    $filteredOrders = $orders->getCollection()->map(function ($order) {
+      $sub_total = $order->items->sum(function ($item) {
+        return $item->CountOfMeters * $item->MeterPrice;
+      });
+      $total = $sub_total - $order->Discount;
+      return [
+        'Number' => $order->Number,
+        'Date' => $order->Date,
+        'PaymentDate' => $order->PaymentDate,
+        'sub_total' => $sub_total,
+        'Discount' => $order->Discount,
+        'total' => $total,
+        'Note' => $order->Note,
+        'Status' => $order->Status,
+        'customer_name' => $order->customer->FullName,
+      ];
+    });
+
+    $orders->setCollection($filteredOrders);
+    return response()->json($orders);
+  }
 }

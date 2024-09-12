@@ -2781,6 +2781,164 @@
                 ]
             }
         },
+        "/api/orders/status": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get orders by status with pagination.",
+                "description": "Retrieve a list of orders by status with pagination.",
+                "operationId": "97207e9ed86ca72e6bc3cdaeef4d7053",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Order status (0, 1, 2).",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of orders per page.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "Number": {
+                                                        "type": "string",
+                                                        "example": "ORD123"
+                                                    },
+                                                    "Date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2024-09-01"
+                                                    },
+                                                    "PaymentDate": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2024-09-05"
+                                                    },
+                                                    "sub_total": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 250
+                                                    },
+                                                    "Discount": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 10
+                                                    },
+                                                    "total": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 240
+                                                    },
+                                                    "Note": {
+                                                        "type": "string",
+                                                        "example": "Order note here"
+                                                    },
+                                                    "Status": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "customer_name": {
+                                                        "type": "string",
+                                                        "example": "John Doe"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 50
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "first_page_url": {
+                                            "type": "string",
+                                            "example": "/api/orders/status?page=1&per_page=5"
+                                        },
+                                        "last_page_url": {
+                                            "type": "string",
+                                            "example": "/api/orders/status?page=10&per_page=5"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string",
+                                            "example": "/api/orders/status?page=2&per_page=5"
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string",
+                                            "example": "/api/orders/status?page=0&per_page=5"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/orders/{orderId}/payments": {
             "post": {
                 "tags": [

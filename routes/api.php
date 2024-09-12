@@ -76,6 +76,7 @@ Route::middleware(['auth:api'])->group(function () {
   Route::delete('/order/delete', [OrderController::class, 'deleteOrder']);
   Route::get('/orders/deleted', [OrderController::class, 'getDeletedOrders']);
   Route::patch('/orders/restore', [OrderController::class, 'restoreOrders']);
+  Route::get('/orders/status', [OrderController::class, 'getByStatus']);
 
   Route::get('/orders/search', [OrderController::class, 'searchOrdersByDate']);
 
