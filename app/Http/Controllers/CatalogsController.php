@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Color;
 use App\Models\Catalog;
 use Illuminate\Http\Request;
-use App\Models\Color;
+use Spatie\QueryBuilder\QueryBuilder;
 
 
 
 class CatalogsController extends Controller
 {
+
   /**
    * @OA\Get(
    *     path="/api/catalogs",
-   *     summary="Get a list of catalogs",
-   *     description="Returns a paginated list of catalogs with their total meters",
+   *     summary="Get a list of catalogs with optional filters",
+   *     description="Returns a paginated list of catalogs with their total meters and optional filters for name and price",
    *     tags={"Catalogs"},
-   *  *     security={{"bearerAuth": {}}},
+   *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="per_page",
    *         in="query",
@@ -30,6 +32,19 @@ class CatalogsController extends Controller
    *         description="Page number",
    *         required=false,
    *         @OA\Schema(type="integer", default=1)
+   *     ),
+   *     @OA\Parameter(
+   *         name="filter[]",
+   *         in="query",
+   *         description="Filter catalogs by attributes (e.g., 'Name' or 'Price')",
+   *         required=false,
+   *         @OA\Schema(
+   *             type="array",
+   *             @OA\Items(
+   *                 type="string",
+   *                 enum={"Name", "Price"}
+   *             )
+   *         )
    *     ),
    *     @OA\Response(
    *         response=200,
@@ -57,7 +72,9 @@ class CatalogsController extends Controller
   {
     $perPage = $request->input('per_page', 5);
     $page = $request->input('page', 1);
-    $catalogs = Catalog::select('Id', 'Name', 'Price')
+
+    $catalogs = QueryBuilder::for(Catalog::class)
+      ->allowedFilters(['Name', 'Price'])
       ->withSum('quantities as total_meters', 'Quantity')
       ->paginate($perPage, ['*'], 'page', $page);
     return response()->json([
@@ -265,75 +282,5 @@ class CatalogsController extends Controller
     return response()->json([
       'message' => 'Catalog deleted successfully!'
     ]);
-  }
-  /**
-   * @OA\Get(
-   *     path="/api/search/catalogs",
-   *     summary="Search catalogs",
-   *     description="Search for catalogs by name or price",
-   *     tags={"Catalogs"},
-   *  *     security={{"bearerAuth": {}}},
-   *     @OA\Parameter(
-   *         name="search",
-   *         in="query",
-   *         description="Search query for catalogs",
-   *         required=false,
-   *         @OA\Schema(type="string")
-   *     ),
-   *     @OA\Parameter(
-   *         name="per_page",
-   *         in="query",
-   *         description="Number of items per page",
-   *         required=false,
-   *         @OA\Schema(type="integer", default=5)
-   *     ),
-   *     @OA\Parameter(
-   *         name="page",
-   *         in="query",
-   *         description="Page number",
-   *         required=false,
-   *         @OA\Schema(type="integer", default=1)
-   *     ),
-   *     @OA\Response(
-   *         response=200,
-   *         description="Successful operation",
-   *         @OA\JsonContent(
-   *             @OA\Property(property="search", type="object",
-   *                 @OA\Property(property="current_page", type="integer", example=1),
-   *                 @OA\Property(property="per_page", type="integer", example=5),
-   *                 @OA\Property(property="total", type="integer", example=50),
-   *                 @OA\Property(property="last_page", type="integer", example=10),
-   *                 @OA\Property(property="data", type="array",
-   *                     @OA\Items(
-   *                         @OA\Property(property="Name", type="string", example="Catalog Name"),
-   *                         @OA\Property(property="Price", type="number", format="float", example=99.99)
-   *                     )
-   *                 )
-   *             )
-   *         )
-   *     )
-   * )
-   */
-  public function search(Request $request)
-  {
-    $perPage = $request->input('per_page', 5);
-    $page = $request->input('page', 1);
-    $search = $request->input('search');
-    if ($search) {
-      $catalogs = Catalog::where('Name', 'LIKE', '%' . $search . '%')
-        ->orWhere('Price', 'LIKE', '%' . $search . '%')
-        ->paginate($perPage, ['*'], 'page', $page);
-    } else {
-      $catalogs =
-        Catalog::select('Id', 'Name', 'Price')
-        ->withSum('quantities as total_meters', 'Quantity')->paginate($perPage, ['*'], 'page', $page);
-    }
-
-    return response()->json(
-      [
-        'search' => $catalogs
-      ],
-      200
-    );
   }
 }

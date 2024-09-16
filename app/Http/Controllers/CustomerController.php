@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
 {
@@ -12,9 +13,9 @@ class CustomerController extends Controller
    * @OA\Get(
    *     path="/api/customers",
    *     summary="Get a list of customers",
-   *     description="Returns a paginated list of customers with their details",
-   *   *      tags={"Customers"},
-   *  *     security={{"bearerAuth": {}}},
+   *     description="Returns a paginated list of customers with their details and allows filtering by specific fields",
+   *     tags={"Customers"},
+   *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="per_page",
    *         in="query",
@@ -28,6 +29,17 @@ class CustomerController extends Controller
    *         description="Page number",
    *         required=false,
    *         @OA\Schema(type="integer", default=1)
+   *     ),
+   *     @OA\Parameter(
+   *         name="filter[]",
+   *         in="query",
+   *         description="Filter customers by specific fields. Example: filter[FullName]=John",
+   *         required=false,
+   *         @OA\Schema(
+   *             type="array",
+   *             @OA\Items(type="string"),
+   *             example={"FullName=John", "Country=USA"}
+   *         )
    *     ),
    *     @OA\Response(
    *         response=200,
@@ -53,14 +65,32 @@ class CustomerController extends Controller
    *                 @OA\Property(property="total", type="integer", example=100)
    *             )
    *         )
+   *     ),
+   *     @OA\Response(
+   *         response=401,
+   *         description="Unauthorized",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="message", type="string", example="Unauthorized")
+   *         )
+   *     ),
+   *     @OA\Response(
+   *         response=404,
+   *         description="Customers not found",
+   *         @OA\JsonContent(
+   *             @OA\Property(property="message", type="string", example="No customers found")
+   *         )
    *     )
    * )
    */
+
   public function get(Request $request)
   {
     $perPage = $request->input('per_page', 5);
     $page = $request->input('page', 1);
-    $customers = Customer::select('Id', 'FullName', 'Country', 'PhoneNumber', 'Email')
+
+    $customers = QueryBuilder::for(Customer::class)
+      ->allowedFilters(['Id', 'FullName', 'Country', 'PhoneNumber', 'Email'])
+      ->select('Id', 'FullName', 'Country', 'PhoneNumber', 'Email')
       ->paginate($perPage, ['*'], 'page', $page);
     return response()->json([
       'data' => $customers
@@ -307,98 +337,5 @@ class CustomerController extends Controller
       'message' =>
       'Customer deleted successfully'
     ]);
-  }
-  /**
-   * @OA\Get(
-   *     path="/api/search/customers",
-   *     summary="Search for customers",
-   *     description="Search for customers by various fields such as name, email, country, etc.",
-   * * tags={"Customers"},
-   *  *     security={{"bearerAuth": {}}},
-   *     @OA\Parameter(
-   *         name="search",
-   *         in="query",
-   *         description="Search query for customers",
-   *         required=false,
-   *         @OA\Schema(type="string")
-   *     ),
-   *     @OA\Parameter(
-   *         name="per_page",
-   *         in="query",
-   *         description="Number of items per page",
-   *         required=false,
-   *         @OA\Schema(type="integer", default=5)
-   *     ),
-   *     @OA\Parameter(
-   *         name="page",
-   *         in="query",
-   *         description="Page number",
-   *         required=false,
-   *         @OA\Schema(type="integer", default=1)
-   *     ),
-   *     @OA\Response(
-   *         response=200,
-   *         description="Successful operation",
-   *         @OA\JsonContent(
-   *             type="object",
-   *             @OA\Property(
-   *                 property="search",
-   *                 type="object",
-   *                 @OA\Property(
-   *                     property="data",
-   *                     type="array",
-   *                     @OA\Items(
-   *                         type="object",
-   *                         @OA\Property(property="Id", type="integer", example=1),
-   *                         @OA\Property(property="SeqNumber", type="string", example="S123456"),
-   *                         @OA\Property(property="FullName", type="string", example="John Doe"),
-   *                         @OA\Property(property="Country", type="string", example="USA"),
-   *                         @OA\Property(property="PhoneNumber", type="string", example="123-456-7890"),
-   *                         @OA\Property(property="Email", type="string", example="john.doe@example.com"),
-   *                         @OA\Property(property="Address", type="string", example="123 Main St")
-   *                     )
-   *                 ),
-   *                 @OA\Property(property="current_page", type="integer", example=1),
-   *                 @OA\Property(property="per_page", type="integer", example=5),
-   *                 @OA\Property(property="total", type="integer", example=100),
-   *                 @OA\Property(property="last_page", type="integer", example=20)
-   *             )
-   *         )
-   *     )
-   * )
-   */
-  public function search(Request $request)
-  {
-    $perPage = $request->input('per_page', 5);
-    $page = $request->input('page', 1);
-    $search = $request->input('search');
-
-    if ($search) {
-      $customers = Customer::where('FullName', 'LIKE', '%' . $search . '%')
-        ->orWhere('SeqNumber', 'LIKE', '%' . $search . '%')
-        ->orWhere('Country', 'LIKE', '%' . $search . '%')
-        ->orWhere('Email', 'LIKE', '%' . $search . '%')
-        ->orWhere('PhoneNumber', 'LIKE', '%' . $search . '%')
-        ->orWhere('Address', 'LIKE', '%' . $search . '%')
-        ->select(
-          'Id',
-          'SeqNumber',
-          'FullName',
-          'Country',
-          'PhoneNumber',
-          'Email',
-          'Address'
-        )
-        ->paginate($perPage, ['*'], 'page', $page);
-    } else {
-      $customers = Customer::paginate($perPage, ['*'], 'page', $page);
-    }
-
-    return response()->json(
-      [
-        'search' => $customers
-      ],
-      200
-    );
   }
 }

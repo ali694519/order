@@ -6,6 +6,7 @@ use App\Models\Item;
 use App\Models\Order;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class OrderController extends Controller
 {
@@ -652,8 +653,8 @@ class OrderController extends Controller
    * @OA\Get(
    *     path="/api/orders",
    *     summary="Get a list of orders",
-   *     description="Retrieve a paginated list of orders with their customer and item details.",
-   *  *     tags={"Orders"},
+   *     description="Retrieve a paginated list of orders with customer and item details, filtered by optional fields like status, number, start date, and end date.",
+   *     tags={"Orders"},
    *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="per_page",
@@ -668,6 +669,34 @@ class OrderController extends Controller
    *         description="Page number for pagination.",
    *         required=false,
    *         @OA\Schema(type="integer", example=1)
+   *     ),
+   *     @OA\Parameter(
+   *         name="start_date",
+   *         in="query",
+   *         description="Filter orders from this start date.",
+   *         required=false,
+   *         @OA\Schema(type="string", format="date", example="2024-09-01")
+   *     ),
+   *     @OA\Parameter(
+   *         name="end_date",
+   *         in="query",
+   *         description="Filter orders up to this end date.",
+   *         required=false,
+   *         @OA\Schema(type="string", format="date", example="2024-09-30")
+   *     ),
+   *     @OA\Parameter(
+   *         name="filter[Status]",
+   *         in="query",
+   *         description="Filter orders by status.",
+   *         required=false,
+   *         @OA\Schema(type="string", example="pending")
+   *     ),
+   *     @OA\Parameter(
+   *         name="filter[Number]",
+   *         in="query",
+   *         description="Filter orders by order number.",
+   *         required=false,
+   *         @OA\Schema(type="string", example="ORD123")
    *     ),
    *     @OA\Response(
    *         response=200,
@@ -743,129 +772,26 @@ class OrderController extends Controller
    *     )
    * )
    */
+
   public function get(Request $request)
   {
     $perPage = $request->input('per_page', 5);
     $page = $request->input('page', 1);
-
-    $orders = Order::with([
-      'customer:Id,FullName',
-      'items:Id,OrderId,CountOfMeters,MeterPrice'
-    ])->where('IsDeleted', false)
-      ->paginate($perPage, ['*'], 'page', $page);
-
-    $filteredOrders = $orders->map(function ($order) {
-      $sub_total = $order->items->sum(function ($item) {
-        return $item->CountOfMeters * $item->MeterPrice;
-      });
-      $total = $sub_total - $order->Discount;
-      return [
-        'Number' => $order->Number,
-        'Date' => $order->Date,
-        'PaymentDate' => $order->PaymentDate,
-        'sub_total' => $sub_total,
-        'Discount' => $order->Discount,
-        'total' => $total,
-        'Note' => $order->Note,
-        'customer_name' => $order->customer->FullName,
-      ];
-    });
-    $data = $orders->setCollection(collect($filteredOrders));
-    return response()->json([
-      'data' => $data
-    ]);
-  }
-
-  /**
-   * @OA\Get(
-   *     path="/orders/search",
-   *     summary="Search orders within a date range",
-   *     description="Retrieve orders placed between the specified start date and end date.",
-   *     tags={"Orders"},
-   *  *     security={{"bearerAuth": {}}},
-   *     @OA\Parameter(
-   *         name="start_date",
-   *         in="query",
-   *         description="Start date for the search (format: YYYY-MM-DD)",
-   *         required=true,
-   *         @OA\Schema(
-   *             type="string",
-   *             format="date"
-   *         )
-   *     ),
-   *     @OA\Parameter(
-   *         name="end_date",
-   *         in="query",
-   *         description="End date for the search (format: YYYY-MM-DD)",
-   *         required=true,
-   *         @OA\Schema(
-   *             type="string",
-   *             format="date"
-   *         )
-   *     ),
-   *     @OA\Response(
-   *         response=200,
-   *         description="Orders retrieved successfully",
-   *         @OA\JsonContent(
-   *             type="object",
-   *             @OA\Property(
-   *                 property="data",
-   *                 type="array",
-   *                 @OA\Items(
-   *                     type="object",
-   *                     @OA\Property(property="Id", type="integer"),
-   *                     @OA\Property(property="Number", type="string"),
-   *                     @OA\Property(property="Date", type="string", format="date"),
-   *                     @OA\Property(property="PaymentDate", type="string", format="date"),
-   *                     @OA\Property(property="Discount", type="number", format="float"),
-   *                     @OA\Property(property="Note", type="string"),
-   *                     @OA\Property(property="customer_name", type="string"),
-   *                     @OA\Property(
-   *                         property="items",
-   *                         type="array",
-   *                         @OA\Items(
-   *                             type="object",
-   *                             @OA\Property(property="Id", type="integer"),
-   *                             @OA\Property(property="Catalog", type="string"),
-   *                             @OA\Property(property="ColorNumber", type="integer"),
-   *                             @OA\Property(property="CountOfMeters", type="number", format="float"),
-   *                             @OA\Property(property="MeterPrice", type="number", format="float"),
-   *                             @OA\Property(property="Note", type="string")
-   *                         )
-   *                     )
-   *                 )
-   *             )
-   *         )
-   *     ),
-   *     @OA\Response(
-   *         response=400,
-   *         description="Invalid input",
-   *         @OA\JsonContent(
-   *             @OA\Property(property="message", type="string", example="Invalid input")
-   *         )
-   *     )
-   * )
-   */
-  public function searchOrdersByDate(Request $request)
-  {
-    $perPage = $request->input('per_page', 5);
-    $page = $request->input('page', 1);
-
     $validatedData = $request->validate([
-      'start_date' => 'required|date',
-      'end_date' => 'required|date|after_or_equal:start_date',
+      'start_date' => 'nullable|date',
+      'end_date' => 'nullable|date|after_or_equal:start_date',
     ]);
-
-    $startDate = $validatedData['start_date'];
-    $endDate = $validatedData['end_date'];
-
-    $orders = Order::with([
-      'customer:Id,FullName',
-      'items:Id,OrderId,Catalog,ColorNumber,CountOfMeters,MeterPrice'
-    ])->whereBetween('Date', [$startDate, $endDate])
-      ->where('IsDeleted', false)
-      ->paginate($perPage, ['*'], 'page', $page);
-
+    $ordersQuery = QueryBuilder::for(Order::class)
+      ->allowedFilters(['Status', 'Number'])
+      ->with([
+        'customer:Id,FullName',
+        'items:Id,OrderId,CountOfMeters,MeterPrice'
+      ])
+      ->where('IsDeleted', false);
+    if (!empty($validatedData['start_date']) && !empty($validatedData['end_date'])) {
+      $ordersQuery->whereBetween('Date', [$validatedData['start_date'], $validatedData['end_date']]);
+    }
+    $orders = $ordersQuery->paginate($perPage, ['*'], 'page', $page);
     $filteredOrders = $orders->map(function ($order) {
       $sub_total = $order->items->sum(function ($item) {
         return $item->CountOfMeters * $item->MeterPrice;

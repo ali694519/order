@@ -15,6 +15,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "spatie/laravel-query-builder": "^6.0",
         "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {

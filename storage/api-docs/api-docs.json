@@ -14,8 +14,8 @@
                 "tags": [
                     "Catalogs"
                 ],
-                "summary": "Get a list of catalogs",
-                "description": "Returns a paginated list of catalogs with their total meters",
+                "summary": "Get a list of catalogs with optional filters",
+                "description": "Returns a paginated list of catalogs with their total meters and optional filters for name and price",
                 "operationId": "3eab5932b76eb75193564b0d0a329052",
                 "parameters": [
                     {
@@ -36,6 +36,22 @@
                         "schema": {
                             "type": "integer",
                             "default": 1
+                        }
+                    },
+                    {
+                        "name": "filter[]",
+                        "in": "query",
+                        "description": "Filter catalogs by attributes (e.g., 'Name' or 'Price')",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "Price"
+                                ]
+                            }
                         }
                     }
                 ],
@@ -423,104 +439,6 @@
                 ]
             }
         },
-        "/api/search/catalogs": {
-            "get": {
-                "tags": [
-                    "Catalogs"
-                ],
-                "summary": "Search catalogs",
-                "description": "Search for catalogs by name or price",
-                "operationId": "bea6a4fca8bba33a7f2d5a8e7ebc296b",
-                "parameters": [
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Search query for catalogs",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Number of items per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 5
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "search": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 50
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "Name": {
-                                                                "type": "string",
-                                                                "example": "Catalog Name"
-                                                            },
-                                                            "Price": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 99.99
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/catalogs/{catalogId}/colors": {
             "get": {
                 "tags": [
@@ -867,7 +785,7 @@
                     "Customers"
                 ],
                 "summary": "Get a list of customers",
-                "description": "Returns a paginated list of customers with their details",
+                "description": "Returns a paginated list of customers with their details and allows filtering by specific fields",
                 "operationId": "8acc5e9f5561eec1edbaf6a68f600e82",
                 "parameters": [
                     {
@@ -888,6 +806,22 @@
                         "schema": {
                             "type": "integer",
                             "default": 1
+                        }
+                    },
+                    {
+                        "name": "filter[]",
+                        "in": "query",
+                        "description": "Filter customers by specific fields. Example: filter[FullName]=John",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "example": [
+                                "FullName=John",
+                                "Country=USA"
+                            ]
                         }
                     }
                 ],
@@ -942,6 +876,38 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Customers not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No customers found"
                                         }
                                     },
                                     "type": "object"
@@ -1350,123 +1316,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Customer not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/search/customers": {
-            "get": {
-                "tags": [
-                    "Customers"
-                ],
-                "summary": "Search for customers",
-                "description": "Search for customers by various fields such as name, email, country, etc.",
-                "operationId": "8730b5ca0a9e8d753b7ca6467f5ab8f4",
-                "parameters": [
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Search query for customers",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Number of items per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 5
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "search": {
-                                            "properties": {
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "Id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "SeqNumber": {
-                                                                "type": "string",
-                                                                "example": "S123456"
-                                                            },
-                                                            "FullName": {
-                                                                "type": "string",
-                                                                "example": "John Doe"
-                                                            },
-                                                            "Country": {
-                                                                "type": "string",
-                                                                "example": "USA"
-                                                            },
-                                                            "PhoneNumber": {
-                                                                "type": "string",
-                                                                "example": "123-456-7890"
-                                                            },
-                                                            "Email": {
-                                                                "type": "string",
-                                                                "example": "john.doe@example.com"
-                                                            },
-                                                            "Address": {
-                                                                "type": "string",
-                                                                "example": "123 Main St"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 100
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 20
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -2361,7 +2210,7 @@
                     "Orders"
                 ],
                 "summary": "Get a list of orders",
-                "description": "Retrieve a paginated list of orders with their customer and item details.",
+                "description": "Retrieve a paginated list of orders with customer and item details, filtered by optional fields like status, number, start date, and end date.",
                 "operationId": "b20035ea428a4a9377c4a395600756ff",
                 "parameters": [
                     {
@@ -2382,6 +2231,48 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Filter orders from this start date.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-09-01"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Filter orders up to this end date.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-09-30"
+                        }
+                    },
+                    {
+                        "name": "filter[Status]",
+                        "in": "query",
+                        "description": "Filter orders by status.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pending"
+                        }
+                    },
+                    {
+                        "name": "filter[Number]",
+                        "in": "query",
+                        "description": "Filter orders by order number.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ORD123"
                         }
                     }
                 ],
@@ -2489,133 +2380,6 @@
                                         "error": {
                                             "type": "string",
                                             "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/orders/search": {
-            "get": {
-                "tags": [
-                    "Orders"
-                ],
-                "summary": "Search orders within a date range",
-                "description": "Retrieve orders placed between the specified start date and end date.",
-                "operationId": "9133570e8532efa0fc31557f0b131532",
-                "parameters": [
-                    {
-                        "name": "start_date",
-                        "in": "query",
-                        "description": "Start date for the search (format: YYYY-MM-DD)",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "description": "End date for the search (format: YYYY-MM-DD)",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Orders retrieved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "Id": {
-                                                        "type": "integer"
-                                                    },
-                                                    "Number": {
-                                                        "type": "string"
-                                                    },
-                                                    "Date": {
-                                                        "type": "string",
-                                                        "format": "date"
-                                                    },
-                                                    "PaymentDate": {
-                                                        "type": "string",
-                                                        "format": "date"
-                                                    },
-                                                    "Discount": {
-                                                        "type": "number",
-                                                        "format": "float"
-                                                    },
-                                                    "Note": {
-                                                        "type": "string"
-                                                    },
-                                                    "customer_name": {
-                                                        "type": "string"
-                                                    },
-                                                    "items": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "properties": {
-                                                                "Id": {
-                                                                    "type": "integer"
-                                                                },
-                                                                "Catalog": {
-                                                                    "type": "string"
-                                                                },
-                                                                "ColorNumber": {
-                                                                    "type": "integer"
-                                                                },
-                                                                "CountOfMeters": {
-                                                                    "type": "number",
-                                                                    "format": "float"
-                                                                },
-                                                                "MeterPrice": {
-                                                                    "type": "number",
-                                                                    "format": "float"
-                                                                },
-                                                                "Note": {
-                                                                    "type": "string"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Invalid input"
                                         }
                                     },
                                     "type": "object"

@@ -51,7 +51,6 @@ Route::middleware(['auth:api'])->group(function () {
   Route::get('/catalogs/{catalog}', [CatalogsController::class, 'show']);
   Route::post('/catalogs/{catalog}', [CatalogsController::class, 'update']);
   Route::delete('/catalogs/{catalog}', [CatalogsController::class, 'delete']);
-  Route::get('/search/catalogs', [CatalogsController::class, 'search']);
 
 
   //Quantity
@@ -65,7 +64,6 @@ Route::middleware(['auth:api'])->group(function () {
   Route::post('/customers', [CustomerController::class, 'store']);
   Route::post('/customers/{customerId}', [CustomerController::class, 'update']);
   Route::delete('/customers/{customerId}', [CustomerController::class, 'destroy']);
-  Route::get('/search/customers', [CustomerController::class, 'search']);
 
   //Orders
   Route::post('/customers/{customerId}/orders', [OrderController::class, 'store'])->middleware('role:ADMINS');
