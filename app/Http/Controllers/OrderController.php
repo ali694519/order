@@ -418,15 +418,10 @@ class OrderController extends Controller
   public function deleteOrder(Request $request)
   {
     $validatedData = $request->validate([
-      'CustomerId' => 'required|integer',
       'OrderId' => 'required|integer',
     ]);
-
-    $CustomerId = $validatedData['CustomerId'];
     $OrderId = $validatedData['OrderId'];
-
-    $order = Order::where('CustomerId', $CustomerId)
-      ->where('Id', $OrderId)
+    $order = Order::where('Id', $OrderId)
       ->first();
     if (!$order) {
       return response()->json(['message' => 'Order not found'], 404);
@@ -485,15 +480,12 @@ class OrderController extends Controller
   public function deleteOrderPermanently(Request $request)
   {
     $validatedData = $request->validate([
-      'CustomerId' => 'required|integer',
       'OrderId' => 'required|integer',
     ]);
 
-    $CustomerId = $validatedData['CustomerId'];
     $OrderId = $validatedData['OrderId'];
 
-    $order = Order::where('CustomerId', $CustomerId)
-      ->where('Id', $OrderId)
+    $order = Order::where('Id', $OrderId)
       ->first();
 
     if (!$order) {
