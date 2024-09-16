@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Catalog;
 use Illuminate\Http\Request;
+use App\Models\Color;
 
 
 
@@ -168,9 +169,9 @@ class CatalogsController extends Controller
    * @OA\Get(
    *     path="/api/catalogs/{catalog}",
    *     summary="Get a catalog by ID",
-   *     description="Returns a specific catalog by its ID",
-   *  *     tags={"Catalogs"},
-   *  *     security={{"bearerAuth": {}}},
+   *     description="Returns a specific catalog by its ID along with its colors",
+   *     tags={"Catalogs"},
+   *     security={{"bearerAuth": {}}},
    *     @OA\Parameter(
    *         name="catalog",
    *         in="path",
@@ -178,13 +179,31 @@ class CatalogsController extends Controller
    *         required=true,
    *         @OA\Schema(type="integer")
    *     ),
-   *    @OA\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="Successful operation",
    *         @OA\JsonContent(
-   *             @OA\Property(property="id", type="integer", example=1),
-   *             @OA\Property(property="name", type="string", example="Sample Catalog"),
-   *             @OA\Property(property="price", type="number", format="float", example=99.99)
+   *             @OA\Property(
+   *                 property="data",
+   *                 @OA\Property(
+   *                     property="catalog",
+   *                     type="object",
+   *                     @OA\Property(property="Id", type="integer", example=1),
+   *                     @OA\Property(property="Name", type="string", example="Sample Catalog"),
+   *                     @OA\Property(property="Price", type="number", format="float", example=99.99)
+   *                 ),
+   *                 @OA\Property(
+   *                     property="colors",
+   *                     type="array",
+   *                     @OA\Items(
+   *                         type="object",
+   *                         @OA\Property(property="Id", type="integer", example=1),
+   *                         @OA\Property(property="Name", type="string", example="Red"),
+   *                         @OA\Property(property="Quantity", type="integer", example=10),
+   *                         @OA\Property(property="CatalogId", type="integer", example=1)
+   *                     )
+   *                 )
+   *             )
    *         )
    *     ),
    *     @OA\Response(
@@ -196,11 +215,19 @@ class CatalogsController extends Controller
    */
   public function show($catalog)
   {
-    $catalog = Catalog::find($catalog);
+    $catalog = Catalog::where('Id', $catalog)
+      ->first();
     if (!$catalog) {
       return response()->json(['message' => 'Catalog not found'], 404);
     }
-    return response()->json($catalog);
+    $colors = Color::where('CatalogId', $catalog->Id)->get();
+
+    return response()->json([
+      'data' => [
+        'catalog' => $catalog,
+        'colors' => $colors
+      ]
+    ]);
   }
   /**
    * @OA\Delete(

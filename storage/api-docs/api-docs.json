@@ -172,7 +172,7 @@
                     "Catalogs"
                 ],
                 "summary": "Get a catalog by ID",
-                "description": "Returns a specific catalog by its ID",
+                "description": "Returns a specific catalog by its ID along with its colors",
                 "operationId": "15985dc8f98d11b59dfad5fc93290ab0",
                 "parameters": [
                     {
@@ -192,18 +192,52 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Sample Catalog"
-                                        },
-                                        "price": {
-                                            "type": "number",
-                                            "format": "float",
-                                            "example": 99.99
+                                        "data": {
+                                            "properties": {
+                                                "catalog": {
+                                                    "properties": {
+                                                        "Id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "Name": {
+                                                            "type": "string",
+                                                            "example": "Sample Catalog"
+                                                        },
+                                                        "Price": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 99.99
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "colors": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "Id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "Name": {
+                                                                "type": "string",
+                                                                "example": "Red"
+                                                            },
+                                                            "Quantity": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "CatalogId": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
