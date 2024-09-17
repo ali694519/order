@@ -74,7 +74,7 @@ class CatalogsController extends Controller
     $page = $request->input('page', 1);
 
     $catalogs = QueryBuilder::for(Catalog::class)
-      ->allowedFilters(['Name', 'Price'])
+      ->allowedFilters(['Name', 'Price'])->with('quantities')
       ->withSum('quantities as total_meters', 'Quantity')
       ->paginate($perPage, ['*'], 'page', $page);
     return response()->json([
